@@ -1,0 +1,86 @@
+{
+  "users": [],
+  "movies": [
+    {
+      "id": "M1",
+      "title": "Dune: Part Two",
+      "runningMinutes": 166
+    },
+    {
+      "id": "M2",
+      "title": "Inside Out 2",
+      "runningMinutes": 96
+    },
+    {
+      "id": "M3",
+      "title": "Oppenheimer",
+      "runningMinutes": 180
+    },
+    {
+      "id": "M4",
+      "title": "The Dark Knight",
+      "runningMinutes": 152
+    }
+  ],
+  "theaters": [
+    {
+      "id": "T1",
+      "name": "Standard Hall 1",
+      "rows": 6,
+      "columns": 8,
+      "type": "STANDARD"
+    },
+    {
+      "id": "T2",
+      "name": "IMAX Hall",
+      "rows": 7,
+      "columns": 10,
+      "type": "IMAX"
+    },
+    {
+      "id": "T3",
+      "name": "4DX Hall",
+      "rows": 5,
+      "columns": 7,
+      "type": "FOUR_DX"
+    }
+  ],
+  "showtimes": [
+    {
+      "id": "S1",
+      "movieId": "M1",
+      "theaterId": "T2",
+      "startsAt": "2026-06-01T14:00:00",
+      "reservedSeats": []
+    },
+    {
+      "id": "S2",
+      "movieId": "M1",
+      "theaterId": "T1",
+      "startsAt": "2026-06-01T19:30:00",
+      "reservedSeats": []
+    },
+    {
+      "id": "S3",
+      "movieId": "M2",
+      "theaterId": "T3",
+      "startsAt": "2026-06-02T13:00:00",
+      "reservedSeats": []
+    },
+    {
+      "id": "S4",
+      "movieId": "M3",
+      "theaterId": "T1",
+      "startsAt": "2026-06-02T20:00:00",
+      "reservedSeats": []
+    },
+    {
+      "id": "S5",
+      "movieId": "M4",
+      "theaterId": "T2",
+      "startsAt": "2026-06-03T21:00:00",
+      "reservedSeats": []
+    }
+  ],
+  "reservations": []
+}
