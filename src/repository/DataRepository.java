@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class DataRepository {
     private File file;
@@ -36,20 +35,20 @@ public class DataRepository {
         return false;
     }
 
-    public synchronized Optional<User> login(String id, String password) {
+    public synchronized User login(String id, String password) {
         // TODO: users에서 id/password가 일치하는 사용자를 찾아 반환한다.
-        return Optional.empty();
+        return null;
     }
 
-    public synchronized Optional<User> findUser(String id) {
+    public synchronized User findUser(String id) {
         // TODO: users에서 id가 일치하는 사용자를 찾아 반환한다.
     	List<User> users = read().getUsers();
     	for(User user : users) {
     		if(id.equals(user.getId())) {
-    			return Optional.of(user);
+    			return user;
     		}
     	}
-        return Optional.empty();
+        return null;
     }
 
     public synchronized List<Movie> findMovies() {
@@ -57,15 +56,15 @@ public class DataRepository {
         return read().getMovies();
     }
 
-    public synchronized Optional<Movie> findMovie(String movieId) {
+    public synchronized Movie findMovie(String movieId) {
         // TODO: movies에서 movieId가 일치하는 영화를 찾아 반환한다.
     	List<Movie> movies = findMovies();
     	for(Movie movie : movies) {
     		if(movieId.equals(movie.getId())) {
-    			return Optional.of(movie);
+    			return movie;
     		}
     	}
-        return Optional.empty();
+        return null;
     }
 
     public synchronized List<Showtime> findShowtimesByMovie(String movieId) {
@@ -81,26 +80,26 @@ public class DataRepository {
         return targetList;
     }
 
-    public synchronized Optional<Showtime> findShowtime(String showtimeId) {
+    public synchronized Showtime findShowtime(String showtimeId) {
         // TODO: showtimes에서 showtimeId가 일치하는 상영 일정을 찾아 반환한다.
     	List<Showtime> showtimes = read().getShowtimes();
     	for(Showtime showtime : showtimes) {
     		if(showtimeId.equals(showtime.getId())) {
-    			return Optional.of(showtime);
+    			return showtime;
     		}
     	}
-    	return Optional.empty();
+    	return null;
     }
 
-    public synchronized Optional<Theater> findTheater(String theaterId) {
+    public synchronized Theater findTheater(String theaterId) {
         // TODO: theaters에서 theaterId가 일치하는 상영관을 찾아 반환한다.
     	List<Theater> theaters = read().getTheaters();
     	for(Theater theater : theaters) {
     		if(theaterId.equals(theater.getId())) {
-    			return Optional.of(theater);
+    			return theater;
     		}
     	}
-        return Optional.empty();
+        return null;
     }
 
     public synchronized Reservation reserve(String userId, String showtimeId, List<String> seatCodes) {
