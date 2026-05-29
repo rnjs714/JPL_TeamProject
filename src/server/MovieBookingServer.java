@@ -6,10 +6,13 @@ public class MovieBookingServer {
     private static final int PORT = 5555;
     private DataRepository repository;
 
+    public MovieBookingServer() {
+        this.repository = new DataRepository("data/movie-booking.json");
+    }
+
     public static void main(String[] args) {
         // TODO: 서버 객체를 만들고 start()를 호출한다.
-    	DataRepository repository = new DataRepository("data/movie-booking.json");
-        System.out.println(repository.findMovie("M1").getTitle());
+    	new MovieBookingServer().start();
     }
 
     private void start() {

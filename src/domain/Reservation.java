@@ -18,6 +18,15 @@ public class Reservation {
         this.createdAt = LocalDateTime.now();
     }
 
+    public Reservation(String id, String userId, String showtimeId, List<String> seatCodes, ReservationStatus status, LocalDateTime createdAt) {
+        this.id = id;
+        this.userId = userId;
+        this.showtimeId = showtimeId;
+        this.seatCodes = seatCodes;
+        this.status = status;
+        this.createdAt = createdAt;
+    }
+
     public void confirm() {
         this.status = ReservationStatus.CONFIRMED;
     }

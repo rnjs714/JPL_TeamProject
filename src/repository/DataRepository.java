@@ -14,12 +14,13 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.ArrayList;
 
 public class DataRepository {
     private File file;
     private ObjectMapper objectMapper;
+    private MovieBookingData data;
 
     public DataRepository(String filePath) {
         this.file = new File(filePath);
@@ -37,6 +38,7 @@ public class DataRepository {
 
     public synchronized User login(String id, String password) {
         // TODO: users에서 id/password가 일치하는 사용자를 찾아 반환한다.
+        
         return null;
     }
 
@@ -48,7 +50,7 @@ public class DataRepository {
     			return user;
     		}
     	}
-        return null;
+        throw new IllegalArgumentException("사용자를 찾을 수 없습니다: " + id);
     }
 
     public synchronized List<Movie> findMovies() {
@@ -64,12 +66,12 @@ public class DataRepository {
     			return movie;
     		}
     	}
-        return null;
+        throw new IllegalArgumentException("영화를 찾을 수 없습니다: " + movieId);
     }
 
     public synchronized List<Showtime> findShowtimesByMovie(String movieId) {
         // TODO: showtimes에서 movieId가 일치하는 상영 일정 목록을 반환한다.
-    	
+
     	List<Showtime> targetList = new ArrayList<Showtime>();
     	List<Showtime> showtimes = read().getShowtimes();
     	for(Showtime showtime : showtimes) {
@@ -77,6 +79,7 @@ public class DataRepository {
     			targetList.add(showtime);
     		}
     	}
+        if(targetList.isEmpty()) throw new IllegalArgumentException("해당 영화의 상영 일정이 없습니다: " + movieId);
         return targetList;
     }
 
@@ -88,7 +91,7 @@ public class DataRepository {
     			return showtime;
     		}
     	}
-    	return null;
+    	throw new IllegalArgumentException("상영 일정을 찾을 수 없습니다: " + showtimeId);
     }
 
     public synchronized Theater findTheater(String theaterId) {
@@ -99,13 +102,27 @@ public class DataRepository {
     			return theater;
     		}
     	}
-        return null;
+        throw new IllegalArgumentException("상영관을 찾을 수 없습니다: " + theaterId);
     }
 
     public synchronized Reservation reserve(String userId, String showtimeId, List<String> seatCodes) {
         // TODO: JSON 전체를 읽고, 좌석 유효성/중복 예약 여부를 검사한 뒤 Reservation을 생성하고 좌석을 reservedSeats에 추가한다.
-        // TODO: 변경된 MovieBookingData를 write()로 JSON 파일에 저장하고 생성된 예약을 반환한다.
-        return null;
+        try {
+            validateReservationInput(showtimeId, seatCodes);
+            findShowtime(showtimeId).getReservedSeats().addAll(seatCodes);
+            Reservation reservation = new Reservation(
+                    "R" + System.currentTimeMillis(),
+                    userId,
+                    showtimeId,
+                    seatCodes,
+                    ReservationStatus.CONFIRMED,
+                    LocalDateTime.now()
+            );
+            write(this.data);
+            return reservation;
+        } catch (IllegalArgumentException e) {
+                throw e;
+        }
     }
 
     public synchronized Reservation cancelReservation(String reservationId, String requesterId) {
@@ -116,13 +133,24 @@ public class DataRepository {
 
     public synchronized List<Reservation> findReservationsByUser(String userId) {
         // TODO: reservations에서 userId가 일치하는 예약 목록을 반환한다.
-        return null;
+
+        List<Reservation> targetList = new ArrayList<>();
+        List<Reservation> reservations = read().getReservations();
+
+        for(Reservation reservation : reservations) {
+        	if(userId.equals(reservation.getUserId())) {
+        		targetList.add(reservation);
+        	}
+        }
+        if(targetList.isEmpty()) throw new IllegalArgumentException("해당 사용자의 예약 내역이 없습니다: " + userId);
+        return targetList;
     }
 
     private MovieBookingData read() {
         // TODO: objectMapper.readValue(file, MovieBookingData.class)로 JSON 파일 전체를 Java 객체로 변환한다.
     	try {
-            return objectMapper.readValue(file, MovieBookingData.class);
+            if(data != null) return data;
+            return this.data = objectMapper.readValue(file, MovieBookingData.class);
         } catch (IOException e) {
             throw new RuntimeException("JSON 파일 읽기 실패: " + file.getPath(), e);
         }
@@ -132,6 +160,7 @@ public class DataRepository {
         // TODO: objectMapper.writeValue(file, data)로 MovieBookingData 전체를 JSON 파일에 저장한다.
     	try {
             objectMapper.writeValue(file, data);
+            this.data = data;
         } catch (IOException e) {
             throw new RuntimeException("JSON 파일 저장 실패: " + file.getPath(), e);
         }
@@ -139,26 +168,38 @@ public class DataRepository {
 
     private void initializeIfNeeded() {
         // TODO: data 폴더와 JSON 파일이 없으면 생성하고, 비어 있으면 seedData()를 write()로 저장한다.
+        if (!file.exists()) {
+            try {
+                file.getParentFile().mkdirs();
+                file.createNewFile();
+                write(seedData());
+            } catch (IOException e) {
+                throw new RuntimeException("JSON 파일 초기화 실패: " + file.getPath(), e);
+            }
+        } else if (file.length() == 0) {
+            write(seedData());
+        }
     }
 
     private MovieBookingData seedData() {
         // TODO: 초기 영화, 상영관, 상영 일정, 빈 사용자 목록, 빈 예약 목록을 가진 MovieBookingData를 생성한다.
-        return null;
+        return new MovieBookingData();
     }
 
-    private void validateReservationInput(MovieBookingData data, String userId, String showtimeId, List<String> seatCodes) {
+    private void validateReservationInput(String showtimeId, List<String> seatCodes) {
         // TODO: 사용자 존재 여부, 상영 일정 존재 여부, 좌석 형식, 좌석 범위, 이미 예약된 좌석 여부를 검사한다.
+        for(String seat : seatCodes) {
+            validateSeat(findTheater(findShowtime(showtimeId).getTheaterId()), seat);
+            if(findShowtime(showtimeId).getReservedSeats().contains(seat)) {
+            	throw new IllegalArgumentException("이미 예약된 좌석: " + seat);
+            }
+        }
     }
 
     private void validateSeat(Theater theater, String seatCode) {
         // TODO: Theater.isValidSeat()를 이용해 좌석이 상영관 범위 안에 있는지 검사한다.
-    }
-
-    private List<String> normalizeSeats(List<String> seatCodes) {
-        return seatCodes.stream()
-                .map(String::trim)
-                .map(String::toUpperCase)
-                .filter(seatCode -> !seatCode.isBlank())
-                .toList();
+        if(!theater.isValidSeat(seatCode)) {
+            throw new IllegalArgumentException("유효하지 않은 좌석 코드: " + seatCode);
+        }
     }
 }
