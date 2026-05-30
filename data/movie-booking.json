@@ -20,6 +20,9 @@
   }, {
     "id" : "admin",
     "password" : "1234567"
+  }, {
+    "id" : "account1",
+    "password" : "asdf"
   } ],
   "movies" : [ {
     "id" : "M1",
@@ -188,7 +191,7 @@
     "movieId" : "M4",
     "theaterId" : "T4",
     "startsAt" : "2026-06-05T09:50:00",
-    "reservedSeats" : [ "F9", "C7", "E9", "D9" ]
+    "reservedSeats" : [ "C7" ]
   }, {
     "id" : "S14",
     "movieId" : "M2",
@@ -266,13 +269,13 @@
     "movieId" : "M6",
     "theaterId" : "T8",
     "startsAt" : "2026-06-08T21:10:00",
-    "reservedSeats" : [ "D6" ]
+    "reservedSeats" : [ ]
   }, {
     "id" : "S27",
     "movieId" : "M7",
     "theaterId" : "T5",
     "startsAt" : "2026-06-09T10:40:00",
-    "reservedSeats" : [ "E5", "E4" ]
+    "reservedSeats" : [ "E5", "G3", "G4", "G5", "E4" ]
   }, {
     "id" : "S28",
     "movieId" : "M7",
@@ -475,7 +478,7 @@
     "userId" : "rnjs",
     "showtimeId" : "S26",
     "seatCodes" : [ "D6" ],
-    "status" : "CONFIRMED",
+    "status" : "CANCELED",
     "createdAt" : "2026-05-31T10:40:00"
   }, {
     "id" : "R1780300000022",
@@ -524,7 +527,77 @@
     "userId" : "rnjs",
     "showtimeId" : "S13",
     "seatCodes" : [ "F9", "E9", "D9" ],
-    "status" : "CONFIRMED",
+    "status" : "CANCELED",
     "createdAt" : "2026-05-31T01:27:21.414454"
+  }, {
+    "id" : "R1780159321979",
+    "userId" : "1234",
+    "showtimeId" : "S12",
+    "seatCodes" : [ "A8" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T01:42:01.981014"
+  }, {
+    "id" : "R1780160505281",
+    "userId" : "account1",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "G1" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T02:01:45.281806"
+  }, {
+    "id" : "R1780160644839",
+    "userId" : "account1",
+    "showtimeId" : "S27",
+    "seatCodes" : [ "G3", "G4", "G5" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T02:04:04.840811"
+  }, {
+    "id" : "R1780161447451",
+    "userId" : "1234",
+    "showtimeId" : "S34",
+    "seatCodes" : [ "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T02:17:27.452636"
+  }, {
+    "id" : "R1780164377344",
+    "userId" : "1234",
+    "showtimeId" : "S13",
+    "seatCodes" : [ "B5", "B6" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:06:17.345281"
+  }, {
+    "id" : "R1780166549886",
+    "userId" : "rnjs",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "D5" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:42:29.8879"
+  }, {
+    "id" : "R1780166558732",
+    "userId" : "1234",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "C4" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:42:38.732322"
+  }, {
+    "id" : "R1780166592779",
+    "userId" : "rnjs",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "A5" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:43:12.779034"
+  }, {
+    "id" : "R1780166631312",
+    "userId" : "rnjs",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "A4" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:43:51.31251"
+  }, {
+    "id" : "R1780166656165",
+    "userId" : "1234",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "A6", "A7" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:44:16.165547"
   } ]
 }

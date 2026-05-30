@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.util.List;
 
@@ -13,7 +12,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
 import javax.swing.border.EmptyBorder;
 
 import controller.BookingController;
@@ -24,39 +22,23 @@ import domain.ReservationStatus;
 import domain.Showtime;
 import domain.Theater;
 
-public class ReservationPanel extends JPanel implements Refreshable {
+public class ReservationPanel extends BasePanel implements Refreshable {
     private static final Dimension ITEM_SIZE = new Dimension(800, 150);
     private final BookingController bookingController;
     private final JPanel reservationListPanel;
     
 
     public ReservationPanel(BookingController bookingController, NavigationController navigationController) {
+        super("Reservations");
         this.bookingController = bookingController;
         this.reservationListPanel = new JPanel();
         reservationListPanel.setLayout(new BoxLayout(reservationListPanel, BoxLayout.Y_AXIS));
 
-
-        setLayout(new BorderLayout());
-
-
-        JPanel titlePanel = new JPanel(new GridBagLayout());
-        titlePanel.setBackground(new Color(50, 130, 50));
-        titlePanel.add(new JLabel("Reservations", SwingConstants.CENTER));
-
-
-        JPanel contentsPanel = new JPanel(new BorderLayout());
-        contentsPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         contentsPanel.add(new JScrollPane(reservationListPanel), BorderLayout.CENTER);
-
 
         JButton backButton = new JButton("Back");
         backButton.addActionListener(event -> navigationController.showHome());
-
-
-        add(titlePanel, BorderLayout.NORTH);
-        add(contentsPanel, BorderLayout.CENTER);
         add(backButton, BorderLayout.SOUTH);
-
     }
 
     @Override

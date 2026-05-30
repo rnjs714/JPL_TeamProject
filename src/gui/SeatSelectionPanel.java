@@ -2,6 +2,7 @@ package gui;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.util.Set;
 
@@ -16,7 +17,8 @@ import controller.BookingController;
 import controller.NavigationController;
 import session.BookingSession; 
 
-public class SeatSelectionPanel extends JPanel implements Refreshable {
+public class SeatSelectionPanel extends BasePanel implements Refreshable {
+    private static final Dimension SCREEN_LABEL_SIZE = new Dimension(800, 44);
     private final BookingSession bookingSession;
     private final JPanel seatGridPanel;
     private final JLabel theaterNameLabel;
@@ -24,6 +26,7 @@ public class SeatSelectionPanel extends JPanel implements Refreshable {
     public SeatSelectionPanel(BookingController bookingController, 
                                 BookingSession bookingSession, 
                                 NavigationController navigationController) {
+        super("Seats");
         this.bookingSession = bookingSession;
         this.seatGridPanel = new JPanel();
         this.theaterNameLabel = new JLabel("", SwingConstants.CENTER);
@@ -31,36 +34,31 @@ public class SeatSelectionPanel extends JPanel implements Refreshable {
         theaterNameLabel.setOpaque(true);
         theaterNameLabel.setBackground(new Color(200, 200, 200));
 
+        JLabel theaterScreenLabel = new JLabel("Screen", SwingConstants.CENTER);
+        theaterScreenLabel.setPreferredSize(SCREEN_LABEL_SIZE);
+        theaterScreenLabel.setMinimumSize(SCREEN_LABEL_SIZE);
+        theaterScreenLabel.setMaximumSize(SCREEN_LABEL_SIZE);
+        theaterScreenLabel.setAlignmentX(CENTER_ALIGNMENT);
+        theaterScreenLabel.setOpaque(true);
+        theaterScreenLabel.setBackground(new Color(150, 150, 150));
+        JPanel emptyPanel = new JPanel();
+        emptyPanel.setPreferredSize(SCREEN_LABEL_SIZE);
+        emptyPanel.setMinimumSize(SCREEN_LABEL_SIZE);
+        emptyPanel.setMaximumSize(SCREEN_LABEL_SIZE);
 
-        setLayout(new BorderLayout());
-
-
-        JPanel titlePanel = new JPanel(new BorderLayout());
-        JLabel titleLabel = new JLabel("Seats", SwingConstants.CENTER);
-        titleLabel.setOpaque(true);
-        titleLabel.setBackground(new Color(50, 130, 50));
-        titlePanel.add(titleLabel, BorderLayout.NORTH);
         titlePanel.add(theaterNameLabel, BorderLayout.SOUTH);
-
-
-        JPanel contentsPanel = new JPanel(new BorderLayout());
-        contentsPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        contentsPanel.add(theaterScreenLabel, BorderLayout.NORTH);
+        contentsPanel.add(emptyPanel, BorderLayout.NORTH);
         contentsPanel.add(seatGridPanel, BorderLayout.CENTER);
-
 
         JButton reserveButton = new JButton("Reserve");
         reserveButton.addActionListener(event -> bookingController.reserveSelectedSeats());
-
         JButton backButton = new JButton("Back");
         backButton.addActionListener(event -> navigationController.showShowtimes());
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.add(backButton);
         buttonPanel.add(reserveButton);
-
-
-        add(titlePanel, BorderLayout.NORTH);
-        add(contentsPanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
 
     }

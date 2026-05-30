@@ -19,7 +19,7 @@ import controller.NavigationController;
 import domain.Showtime;
 import session.BookingSession;
 
-public class ShowtimePanel extends JPanel implements Refreshable {
+public class ShowtimePanel extends BasePanel implements Refreshable {
     private static final Dimension ITEM_SIZE = new Dimension(800, 44);
     private final BookingController bookingController;
     private final BookingSession bookingSession;
@@ -27,40 +27,22 @@ public class ShowtimePanel extends JPanel implements Refreshable {
     private final JLabel movieTitleLabel;
 
     public ShowtimePanel(BookingController bookingController, BookingSession bookingSession, NavigationController navigationController) {
+        super("Showtimes");
         this.bookingController = bookingController; 
         this.bookingSession = bookingSession;
         this.showtimeListPanel = new JPanel();
-        this.showtimeListPanel.setLayout(new BoxLayout(showtimeListPanel, BoxLayout.Y_AXIS));
+        showtimeListPanel.setLayout(new BoxLayout(showtimeListPanel, BoxLayout.Y_AXIS));
         this.movieTitleLabel = new JLabel("", SwingConstants.CENTER);
         movieTitleLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
         movieTitleLabel.setOpaque(true);
         movieTitleLabel.setBackground(new Color(200, 200, 200));
 
-
-        setLayout(new BorderLayout());
-
-
-        JPanel titlePanel = new JPanel(new BorderLayout());
-        JLabel titleLabel = new JLabel("Showtimes", SwingConstants.CENTER);
-        titleLabel.setOpaque(true);
-        titleLabel.setBackground(new Color(50, 130, 50));
-        titlePanel.add(titleLabel, BorderLayout.NORTH);
         titlePanel.add(movieTitleLabel, BorderLayout.SOUTH);
-
-
-        JPanel contentsPanel = new JPanel(new BorderLayout());
-        contentsPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         contentsPanel.add(new JScrollPane(showtimeListPanel), BorderLayout.CENTER);
-
 
         JButton backButton = new JButton("Back");
         backButton.addActionListener(event -> navigationController.showMovies());
-
-
-        add(titlePanel, BorderLayout.NORTH);
-        add(contentsPanel, BorderLayout.CENTER);
         add(backButton, BorderLayout.SOUTH);
-
     }
 
     @Override

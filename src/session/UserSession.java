@@ -5,10 +5,6 @@ import domain.User;
 public class UserSession {
     private User currentUser;
 
-    public boolean isLoggedIn() {
-        return currentUser != null;
-    }
-
     public User getCurrentUser() {
         return currentUser;
     }

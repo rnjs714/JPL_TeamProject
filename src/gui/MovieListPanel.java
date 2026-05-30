@@ -1,25 +1,21 @@
 package gui;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.util.List;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 
 import controller.BookingController;
 import controller.NavigationController;
 import domain.Movie;
 import session.BookingSession;
 
-public class MovieListPanel extends JPanel implements Refreshable {
+public class MovieListPanel extends BasePanel implements Refreshable {
     private static final Dimension ITEM_SIZE = new Dimension(800, 44);
 
     private final BookingController bookingController;
@@ -27,32 +23,16 @@ public class MovieListPanel extends JPanel implements Refreshable {
     private final JPanel movieListPanel;
 
     public MovieListPanel(BookingController bookingController, BookingSession bookingSession, NavigationController navigationController) {
+        super("Movies");
         this.bookingController = bookingController;
         this.bookingSession = bookingSession;
-
-
-        setLayout(new BorderLayout());
-
-
-        JPanel titlePanel = new JPanel(new BorderLayout());
-        titlePanel.setBackground(new Color(50, 130, 50));
-        titlePanel.add(new JLabel("Movies", SwingConstants.CENTER), BorderLayout.CENTER);
-
-
-        movieListPanel = new JPanel();
+        this.movieListPanel = new JPanel();
         movieListPanel.setLayout(new BoxLayout(movieListPanel, BoxLayout.Y_AXIS));
 
-        JPanel contentsPanel = new JPanel(new BorderLayout());
-        contentsPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
         contentsPanel.add(new JScrollPane(movieListPanel), BorderLayout.CENTER);
-
 
         JButton backButton = new JButton("Back");
         backButton.addActionListener(event -> navigationController.showHome());
-
-
-        add(titlePanel, BorderLayout.NORTH);
-        add(contentsPanel, BorderLayout.CENTER);
         add(backButton, BorderLayout.SOUTH);
     }
 
