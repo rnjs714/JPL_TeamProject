@@ -35,10 +35,6 @@ public class Reservation {
         this.status = ReservationStatus.CANCELED;
     }
 
-    public boolean isCanceled() {
-        return status == ReservationStatus.CANCELED;
-    }
-
     public String getId() {
         return id;
     }

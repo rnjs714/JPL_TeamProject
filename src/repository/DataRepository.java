@@ -1,25 +1,25 @@
 package repository;
 
+import java.io.File;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 import domain.Movie;
 import domain.Reservation;
 import domain.ReservationStatus;
 import domain.Showtime;
 import domain.Theater;
-import domain.TheaterType;
 import domain.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-
-import java.io.File;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.ArrayList;
 
 public class DataRepository {
-    private File file;
-    private ObjectMapper objectMapper;
+    private final File file;
+    private final ObjectMapper objectMapper;
     private MovieBookingData data;
 
     public DataRepository(String filePath) {
@@ -33,24 +33,37 @@ public class DataRepository {
 
     public synchronized boolean register(User user) {
         // TODO: JSON 전체를 read()로 읽고, 중복 ID가 없으면 users에 추가한 뒤 write()로 저장한다.
-        return false;
+        List<User> existingUsers = read().getUsers();
+        for (User existingUser : existingUsers) {
+            if (existingUser.getId().equals(user.getId())) {
+                return false;
+            }
+        }
+        existingUsers.add(user);
+        write(this.data);
+        return true;
     }
 
-    public synchronized User login(String id, String password) {
+        public synchronized User login(String id, String password) {
         // TODO: users에서 id/password가 일치하는 사용자를 찾아 반환한다.
-        
+        List<User> users = read().getUsers();
+        for (User user : users) {
+            if (user.getId().equals(id) && user.getPassword().equals(password)) {
+                return user;
+            }
+        }
         return null;
     }
 
     public synchronized User findUser(String id) {
         // TODO: users에서 id가 일치하는 사용자를 찾아 반환한다.
-    	List<User> users = read().getUsers();
+        List<User> users = read().getUsers();
     	for(User user : users) {
     		if(id.equals(user.getId())) {
     			return user;
     		}
     	}
-        throw new IllegalArgumentException("사용자를 찾을 수 없습니다: " + id);
+        return null;
     }
 
     public synchronized List<Movie> findMovies() {
@@ -66,20 +79,19 @@ public class DataRepository {
     			return movie;
     		}
     	}
-        throw new IllegalArgumentException("영화를 찾을 수 없습니다: " + movieId);
+        return null;
     }
 
     public synchronized List<Showtime> findShowtimesByMovie(String movieId) {
         // TODO: showtimes에서 movieId가 일치하는 상영 일정 목록을 반환한다.
 
-    	List<Showtime> targetList = new ArrayList<Showtime>();
+    	List<Showtime> targetList = new ArrayList<>();
     	List<Showtime> showtimes = read().getShowtimes();
     	for(Showtime showtime : showtimes) {
     		if(movieId.equals(showtime.getMovieId())) {
     			targetList.add(showtime);
     		}
     	}
-        if(targetList.isEmpty()) throw new IllegalArgumentException("해당 영화의 상영 일정이 없습니다: " + movieId);
         return targetList;
     }
 
@@ -91,7 +103,7 @@ public class DataRepository {
     			return showtime;
     		}
     	}
-    	throw new IllegalArgumentException("상영 일정을 찾을 수 없습니다: " + showtimeId);
+    	return null;
     }
 
     public synchronized Theater findTheater(String theaterId) {
@@ -102,31 +114,57 @@ public class DataRepository {
     			return theater;
     		}
     	}
-        throw new IllegalArgumentException("상영관을 찾을 수 없습니다: " + theaterId);
+        return null;
     }
 
     public synchronized Reservation reserve(String userId, String showtimeId, List<String> seatCodes) {
         // TODO: JSON 전체를 읽고, 좌석 유효성/중복 예약 여부를 검사한 뒤 Reservation을 생성하고 좌석을 reservedSeats에 추가한다.
         try {
+            User user = findUser(userId);
+            if(user == null) {
+                throw new IllegalArgumentException("Wrong User ID.");
+            }
+            Showtime showtime = findShowtime(showtimeId);
+            if(showtime == null) {
+                throw new IllegalArgumentException("Wrong Showtime ID.");
+            }
             validateReservationInput(showtimeId, seatCodes);
-            findShowtime(showtimeId).getReservedSeats().addAll(seatCodes);
+            showtime.getReservedSeats().addAll(seatCodes);
             Reservation reservation = new Reservation(
                     "R" + System.currentTimeMillis(),
-                    userId,
-                    showtimeId,
+                    user.getId(),
+                    showtime.getId(),
                     seatCodes,
                     ReservationStatus.CONFIRMED,
                     LocalDateTime.now()
             );
+            List<Reservation> reservations = read().getReservations();
+            reservations.add(reservation);
             write(this.data);
             return reservation;
         } catch (IllegalArgumentException e) {
-                throw e;
+            throw e;
         }
     }
 
     public synchronized Reservation cancelReservation(String reservationId, String requesterId) {
         // TODO: 예약 ID로 Reservation을 찾고, requesterId가 예약자와 일치하면 상태를 CANCELED로 변경한다.
+        List<Reservation> reservations = read().getReservations();
+        for (Reservation reservation : reservations) {
+            if(reservationId.equals(reservation.getId()) ) {
+                if(!reservation.getUserId().equals(requesterId)) {
+                    throw new IllegalArgumentException("Requester ID does not match.");
+                }
+                Showtime showtime = findShowtime(reservation.getShowtimeId());
+                for(String seatCode : reservation.getSeatCodes()) {
+                    showtime.getReservedSeats().remove(seatCode);
+                }
+                reservation.cancel();
+                // reservations.remove(reservation);
+                write(this.data);
+                return reservation;
+            }
+        }
         // TODO: 필요하면 Showtime의 reservedSeats에서 해당 좌석을 제거한 뒤 JSON 파일에 저장한다.
         return null;
     }
@@ -142,7 +180,6 @@ public class DataRepository {
         		targetList.add(reservation);
         	}
         }
-        if(targetList.isEmpty()) throw new IllegalArgumentException("해당 사용자의 예약 내역이 없습니다: " + userId);
         return targetList;
     }
 
@@ -160,7 +197,6 @@ public class DataRepository {
         // TODO: objectMapper.writeValue(file, data)로 MovieBookingData 전체를 JSON 파일에 저장한다.
     	try {
             objectMapper.writeValue(file, data);
-            this.data = data;
         } catch (IOException e) {
             throw new RuntimeException("JSON 파일 저장 실패: " + file.getPath(), e);
         }

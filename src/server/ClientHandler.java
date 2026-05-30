@@ -1,24 +1,30 @@
 package server;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import domain.Movie;
 import domain.Reservation;
 import domain.Showtime;
+import domain.Theater;
 import domain.User;
 import protocol.Request;
 import protocol.Response;
 import repository.DataRepository;
 
 public class ClientHandler implements Runnable {
-    private Socket socket;
-    private DataRepository repository;
-    private ObjectMapper objectMapper;
+    private final Socket socket;
+    private final DataRepository repository;
+    private final ObjectMapper objectMapper;
 
     public ClientHandler(Socket socket, DataRepository repository) {
         this.socket = socket;
@@ -28,41 +34,41 @@ public class ClientHandler implements Runnable {
 
     @Override
     public void run() {
-        // TODO: 클라이언트 요청 JSON을 읽고 Request로 변환한 뒤 Response JSON을 반환한다.
-        try {
-            
-        } catch (Exception e) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+                PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
+            String requestJson;
+            while ((requestJson = reader.readLine()) != null) {
+                Request request = objectMapper.readValue(requestJson, Request.class);
+                Response response = handle(request);
+                writer.println(objectMapper.writeValueAsString(response));
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("클라이언트 요청 처리 실패", e);
         }
     }
 
     private Response handle(Request request) {
         // TODO: command 값에 따라 register, login, reserve 등으로 분기한다.
-        switch (request.getCommand()) {
-            case "register":
-                return register(request.getBody());
-            case "login":
-                return login(request.getBody());
-            case "list_movies":
-                return listMovies();
-            case "list_showtimes":
-                return listShowtimes(request.getBody());
-            case "reserve":
-                return reserve(request.getBody());
-            case "cancel_reservation":
-                return cancelReservation(request.getBody());
-            case "list_reservations":
-                return listReservations(request.getBody());
-            default:
-                return Response.fail("Unknown command: " + request.getCommand());
-        }
+        return switch (request.getCommand()) {
+            case "REGISTER" -> register(request.getBody());
+            case "LOGIN" -> login(request.getBody());
+            case "LIST_MOVIES" -> listMovies();
+            case "LIST_SHOWTIMES" -> listShowtimes(request.getBody());
+            case "GET_THEATER" -> getTheater(request.getBody());
+            case "GET_MOVIES" -> getMovie(request.getBody());
+            case "GET_SHOWTIME" -> getShowtime(request.getBody());
+            case "RESERVE" -> reserve(request.getBody());
+            case "CANCEL_RESERVATION" -> cancelReservation(request.getBody());
+            case "LIST_RESERVATIONS" -> listReservations(request.getBody());
+            default -> Response.fail("Unknown command: " + request.getCommand());
+        };
     }
 
     private Response register(Map<String, Object> body) {
         // TODO: 회원가입 요청을 처리한다.
         User newUser = new User(
                 (String) body.get("id"),
-                (String) body.get("password"),
-                (String) body.get("name")
+                (String) body.get("password")
         );
         boolean success = repository.register(newUser);
         if (success) {
@@ -76,7 +82,11 @@ public class ClientHandler implements Runnable {
         // TODO: 로그인 요청을 처리한다.
         try {
             User user = repository.login((String) body.get("id"), (String) body.get("password"));
-            return Response.ok("Login successful", user);
+            if (user != null) {
+                return Response.ok("Login successful", user);
+            } else {
+                return Response.fail("Login failed: Invalid ID or password");
+            }
         } catch (IllegalArgumentException e) {
             return Response.fail(e.getMessage());
         }
@@ -86,7 +96,11 @@ public class ClientHandler implements Runnable {
         // TODO: 영화 목록 요청을 처리한다.
         try {
             List<Movie> movies = repository.findMovies();
-            return Response.ok("Movies retrieved successfully", movies);
+            if(!movies.isEmpty()) {
+                return Response.ok("Movies retrieved successfully", movies);
+            } else {
+                return Response.fail("No movies available");
+            }
         } catch (IllegalArgumentException e) {
             return Response.fail(e.getMessage());
         }
@@ -96,7 +110,53 @@ public class ClientHandler implements Runnable {
         // TODO: 영화 ID로 상영 일정 목록 요청을 처리한다.
         try {
             List<Showtime> showtimes = repository.findShowtimesByMovie((String) body.get("movieId"));
-            return Response.ok("Showtimes retrieved successfully", showtimes);
+            if(!showtimes.isEmpty()) {
+                return Response.ok("Showtimes retrieved successfully", showtimes);
+            } else {
+                return Response.fail("No showtimes available for the selected movie");
+            }
+        } catch (IllegalArgumentException e) {
+            return Response.fail(e.getMessage());
+        }
+    }
+
+    private Response getTheater(Map<String, Object> body) {
+        // TODO: 상영관 정보 요청을 처리한다.
+        try {
+            Theater theater = repository.findTheater((String) body.get("theaterId"));
+            if (theater != null) {
+                return Response.ok("Theater retrieved successfully", theater);
+            } else {
+                return Response.fail("Theater not found");
+            }
+        } catch (IllegalArgumentException e) {
+            return Response.fail(e.getMessage());
+        }
+    }
+
+    private Response getMovie(Map<String, Object> body) {
+        // TODO: 영화 정보 요청을 처리한다.
+        try {
+            Movie movie = repository.findMovie((String) body.get("movieId"));
+            if (movie != null) {
+                return Response.ok("Movie retrieved successfully", movie);
+            } else {
+                return Response.fail("Movie not found");
+            }
+        } catch (IllegalArgumentException e) {
+            return Response.fail(e.getMessage());
+        }
+    }
+
+    private Response getShowtime(Map<String, Object> body) {
+        // TODO: 상영 시간 정보 요청을 처리한다.
+        try {
+            Showtime showtime = repository.findShowtime((String) body.get("showtimeId"));
+            if (showtime != null) {
+                return Response.ok("Showtime retrieved successfully", showtime);
+            } else {
+                return Response.fail("Showtime not found");
+            }
         } catch (IllegalArgumentException e) {
             return Response.fail(e.getMessage());
         }
@@ -107,7 +167,7 @@ public class ClientHandler implements Runnable {
         try {
             String userId = (String) body.get("userId");
             String showtimeId = (String) body.get("showtimeId");
-            List<String> seatCodes = (List<String>) body.get("seatCodes");
+            List<String> seatCodes = objectMapper.convertValue(body.get("seatCodes"), new TypeReference<List<String>>() {});
             Reservation reservation = repository.reserve(userId, showtimeId, seatCodes);
             return Response.ok("Reservation successful", reservation);
         } catch (IllegalArgumentException e) {
@@ -118,14 +178,29 @@ public class ClientHandler implements Runnable {
 
     private Response cancelReservation(Map<String, Object> body) {
         // TODO: 예약 취소 요청을 처리한다.
-        return null;
+        try {
+            String reservationId = (String) body.get("reservationId");
+            String requesterId = (String) body.get("requesterId");
+            Reservation reservation = repository.cancelReservation(reservationId, requesterId);
+            if (reservation != null) {
+                return Response.ok("Reservation canceled successfully", reservation);
+            } else {
+                return Response.fail("Cancellation failed: Reservation not found or unauthorized");
+            }
+        } catch (IllegalArgumentException e) {
+            return Response.fail(e.getMessage());
+        }
     }
 
     private Response listReservations(Map<String, Object> body) {
         // TODO: 사용자 ID로 예매 내역 요청을 처리한다.
         try {
             List<Reservation> reservations = repository.findReservationsByUser((String) body.get("userId"));
-            return Response.ok("Reservations retrieved successfully", reservations);
+            if(!reservations.isEmpty()) {
+                return Response.ok("Reservations retrieved successfully", reservations);
+            } else {
+                return Response.fail("No reservations found for the user");
+            }
         } catch (IllegalArgumentException e) {
             return Response.fail(e.getMessage());
         }

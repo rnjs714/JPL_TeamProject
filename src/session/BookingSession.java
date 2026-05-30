@@ -1,17 +1,17 @@
 package session;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import domain.Movie;
 import domain.Showtime;
 import domain.Theater;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BookingSession {
     private Movie selectedMovie;
     private Showtime selectedShowtime;
     private Theater selectedTheater;
-    private List<String> selectedSeats;
+    private final List<String> selectedSeats;
 
     public BookingSession() {
         this.selectedSeats = new ArrayList<>();

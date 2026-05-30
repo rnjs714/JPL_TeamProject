@@ -1,44 +1,127 @@
 package gui;
 
-import controller.BookingController;
-import controller.NavigationController;
-import domain.Reservation;
-
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.util.List;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
 
-public class ReservationPanel extends JPanel {
-    private JPanel reservationListPanel;
+import controller.BookingController;
+import controller.NavigationController;
+import domain.Movie;
+import domain.Reservation;
+import domain.ReservationStatus;
+import domain.Showtime;
+import domain.Theater;
+
+public class ReservationPanel extends JPanel implements Refreshable {
+    private static final Dimension ITEM_SIZE = new Dimension(800, 150);
+    private final BookingController bookingController;
+    private final JPanel reservationListPanel;
+    
 
     public ReservationPanel(BookingController bookingController, NavigationController navigationController) {
+        this.bookingController = bookingController;
+        this.reservationListPanel = new JPanel();
+        reservationListPanel.setLayout(new BoxLayout(reservationListPanel, BoxLayout.Y_AXIS));
+
+
         setLayout(new BorderLayout());
 
-        reservationListPanel = new JPanel(new GridLayout(0, 1, 8, 8));
+
+        JPanel titlePanel = new JPanel(new GridBagLayout());
+        titlePanel.setBackground(new Color(50, 130, 50));
+        titlePanel.add(new JLabel("Reservations", SwingConstants.CENTER));
+
+
+        JPanel contentsPanel = new JPanel(new BorderLayout());
+        contentsPanel.setBorder(new EmptyBorder(20, 20, 20, 20));
+        contentsPanel.add(new JScrollPane(reservationListPanel), BorderLayout.CENTER);
+
 
         JButton backButton = new JButton("Back");
-        backButton.addActionListener(event -> navigationController.showMovies());
+        backButton.addActionListener(event -> navigationController.showHome());
 
-        add(new JLabel("Reservations"), BorderLayout.NORTH);
-        add(new JScrollPane(reservationListPanel), BorderLayout.CENTER);
+
+        add(titlePanel, BorderLayout.NORTH);
+        add(contentsPanel, BorderLayout.CENTER);
         add(backButton, BorderLayout.SOUTH);
 
-        // TODO: 화면 진입 시 refreshReservations(...)를 호출한다.
     }
 
-    public void refreshReservations(BookingController bookingController) {
-        // TODO: 로그인 사용자의 예매 내역을 조회해 예약 번호, 영화, 시간, 좌석, 상태를 표시한다.
+    @Override
+    public final void refresh() {
         reservationListPanel.removeAll();
-        List<Reservation> reservations = bookingController.loadReservations();
+
+        List<Reservation> reservations;
+        try {
+            reservations = bookingController.loadReservations();
+        } catch (IllegalStateException e) {
+            reservationListPanel.add(new JLabel("No Reservations found."));
+            revalidate();
+            repaint();
+            return;
+        }
+
+        if (reservations.isEmpty()) {
+            reservationListPanel.add(new JLabel("No reservations found."));
+            revalidate();
+            repaint();
+            return;
+        }
+
         for (Reservation reservation : reservations) {
-            JButton reservationButton = new JButton(reservation.getId());
-            reservationButton.addActionListener(event -> bookingController.cancelReservation(reservation.getId()));
-            reservationListPanel.add(reservationButton);
+            Showtime showtime = bookingController.getShowtime(reservation.getShowtimeId());
+            Movie movie = bookingController.getMovie(showtime.getMovieId());
+            Theater theater = bookingController.getTheater(showtime.getTheaterId());
+
+            JPanel reservationPanel = new JPanel(new BorderLayout());
+            reservationPanel.setPreferredSize(ITEM_SIZE);
+            reservationPanel.setMaximumSize(ITEM_SIZE);
+            reservationPanel.setMinimumSize(ITEM_SIZE);
+            reservationPanel.setBorder(new EmptyBorder(12, 12, 12, 12));
+            reservationPanel.setBackground(new Color(220, 220, 220));
+            JPanel infoPanel = new JPanel(new GridLayout(3, 2, 0, 0));
+            infoPanel.setBorder(new EmptyBorder(0, 20, 0, 0));
+            infoPanel.setBackground(new Color(220, 220, 220));
+
+            JLabel idLabel = new JLabel("ID: " + reservation.getId());
+            JLabel titleLabel = new JLabel("Movie: " + movie.getTitle());
+            JLabel theaterLabel = new JLabel("Theater: " + theater.getName());
+            JLabel showtimeLabel = new JLabel("Showtime: " + showtime.getStartsAt());
+            JLabel seatLabel = new JLabel("Seats: " + reservation.getSeatCodes());
+            JLabel statusLabel = new JLabel("Status: " + reservation.getStatus());
+            JButton cancelButton = new JButton("Cancel");
+            if(reservation.getStatus() == ReservationStatus.CANCELED) {
+                cancelButton.setEnabled(false);
+            } else {
+                cancelButton.addActionListener(event -> {
+                bookingController.cancelReservation(reservation.getId());
+                refresh();
+                });
+            }
+            infoPanel.add(idLabel);
+            infoPanel.add(titleLabel);
+            infoPanel.add(theaterLabel);
+            infoPanel.add(showtimeLabel);
+            infoPanel.add(seatLabel);
+            infoPanel.add(statusLabel);
+            reservationPanel.add(infoPanel, BorderLayout.CENTER);
+            reservationPanel.add(cancelButton, BorderLayout.EAST);
+
+            JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+            rowPanel.add(reservationPanel);
+            reservationListPanel.add(rowPanel);
         }
         revalidate();
         repaint();

@@ -1,21 +1,32 @@
 package server;
 
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+
 import repository.DataRepository;
 
 public class MovieBookingServer {
     private static final int PORT = 5555;
-    private DataRepository repository;
+    private final DataRepository repository;
 
     public MovieBookingServer() {
         this.repository = new DataRepository("data/movie-booking.json");
     }
 
     public static void main(String[] args) {
-        // TODO: 서버 객체를 만들고 start()를 호출한다.
     	new MovieBookingServer().start();
     }
 
     private void start() {
-        // TODO: ServerSocket을 열고 클라이언트 접속마다 ClientHandler Thread를 생성한다.
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+            while (true) {
+                Socket socket = serverSocket.accept();
+                Thread thread = new Thread(new ClientHandler(socket, repository));
+                thread.start();
+            }
+        } catch (IOException e) {
+            throw new IllegalStateException("서버 실행 실패", e);
+        }
     }
 }
