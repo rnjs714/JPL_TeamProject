@@ -105,6 +105,31 @@ public class BookingController {
         }
     }
 
+    public int calculateSelectedSeatPrice() {
+        if(bookingSession.getSelectedSeats().isEmpty()) {
+            return 0;
+        }
+        return apiClient.getDataFromServer("CALCULATE_PRICE", Map.of(
+                "showtimeId", bookingSession.getSelectedShowtime().getId(),
+                "seatCodes", bookingSession.getSelectedSeats()), new TypeReference<Integer>() {});
+    }
+
+    public Map<String, Object> calculateSeatPriceInfo(String seatCode) {
+        return apiClient.getDataFromServer("GET_SEAT_PRICE", Map.of(
+                "showtimeId", bookingSession.getSelectedShowtime().getId(),
+                "seatCode", seatCode), new TypeReference<Map<String, Object>>() {});
+    }
+
+    public List<String> recommendGroupSeats(int peopleCount) {
+        if(peopleCount <= 0) {
+            throw new IllegalStateException("그룹 인원 수는 1명 이상이어야 합니다.");
+        }
+
+        return apiClient.getDataFromServer("FIND_GROUP_SEATS", Map.of(
+                "showtimeId", bookingSession.getSelectedShowtime().getId(),
+                "peopleCount", peopleCount), new TypeReference<List<String>>() {});
+    }
+
     public List<Reservation> loadReservations() {
         // TODO: LIST_RESERVATIONS 요청을 보내고 response.data를 List<Reservation>으로 변환해서 반환한다.
         try {

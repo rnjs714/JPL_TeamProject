@@ -57,6 +57,9 @@ public class ClientHandler implements Runnable {
             case "GET_THEATER" -> getTheater(request.getBody());
             case "GET_MOVIES" -> getMovie(request.getBody());
             case "GET_SHOWTIME" -> getShowtime(request.getBody());
+            case "CALCULATE_PRICE" -> calculatePrice(request.getBody());
+            case "GET_SEAT_PRICE" -> getSeatPrice(request.getBody());
+            case "FIND_GROUP_SEATS" -> findGroupSeats(request.getBody());
             case "RESERVE" -> reserve(request.getBody());
             case "CANCEL_RESERVATION" -> cancelReservation(request.getBody());
             case "LIST_RESERVATIONS" -> listReservations(request.getBody());
@@ -174,6 +177,53 @@ public class ClientHandler implements Runnable {
             return Response.fail(e.getMessage());
         }
         
+    }
+
+    private Response calculatePrice(Map<String, Object> body) {
+        try {
+            String showtimeId = (String) body.get("showtimeId");
+            List<String> seatCodes = objectMapper.convertValue(body.get("seatCodes"), new TypeReference<List<String>>() {});
+            int totalPrice = repository.calculatePrice(showtimeId, seatCodes);
+            return Response.ok("Price calculated successfully", totalPrice);
+        } catch (IllegalArgumentException e) {
+            return Response.fail(e.getMessage());
+        }
+    }
+
+    private Response getSeatPrice(Map<String, Object> body) {
+        try {
+            String showtimeId = (String) body.get("showtimeId");
+            String seatCode = (String) body.get("seatCode");
+            Map<String, Object> priceInfo = repository.calculateSeatPriceInfo(showtimeId, seatCode);
+            return Response.ok("Seat price calculated successfully", priceInfo);
+        } catch (IllegalArgumentException e) {
+            return Response.fail(e.getMessage());
+        }
+    }
+
+    private Response findGroupSeats(Map<String, Object> body) {
+        try {
+            String showtimeId = (String) body.get("showtimeId");
+            int peopleCount = readInt(body.get("peopleCount"));
+            List<String> seatCodes = repository.findRecommendedGroupSeats(showtimeId, peopleCount);
+            return Response.ok("Group seats found successfully", seatCodes);
+        } catch (IllegalArgumentException e) {
+            return Response.fail(e.getMessage());
+        }
+    }
+
+    private int readInt(Object value) {
+        if(value == null) {
+            throw new IllegalArgumentException("인원 수를 입력해주세요.");
+        }
+        if(value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        try {
+            return Integer.parseInt(String.valueOf(value));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("인원 수는 숫자로 입력해주세요.");
+        }
     }
 
     private Response cancelReservation(Map<String, Object> body) {
