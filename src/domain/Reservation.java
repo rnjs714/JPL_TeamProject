@@ -11,11 +11,26 @@ public class Reservation {
     private List<String> seatCodes;
     private ReservationStatus status;
     private LocalDateTime createdAt;
+    private int totalPrice;
 
     public Reservation() {
         this.seatCodes = new ArrayList<>();
         this.status = ReservationStatus.CONFIRMED;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public Reservation(String id, String userId, String showtimeId, List<String> seatCodes, ReservationStatus status, LocalDateTime createdAt) {
+        this(id, userId, showtimeId, seatCodes, status, createdAt, 0);
+    }
+
+    public Reservation(String id, String userId, String showtimeId, List<String> seatCodes, ReservationStatus status, LocalDateTime createdAt, int totalPrice) {
+        this.id = id;
+        this.userId = userId;
+        this.showtimeId = showtimeId;
+        this.seatCodes = seatCodes;
+        this.status = status;
+        this.createdAt = createdAt;
+        this.totalPrice = totalPrice;
     }
 
     public void confirm() {
@@ -24,10 +39,6 @@ public class Reservation {
 
     public void cancel() {
         this.status = ReservationStatus.CANCELED;
-    }
-
-    public boolean isCanceled() {
-        return status == ReservationStatus.CANCELED;
     }
 
     public String getId() {
@@ -76,5 +87,13 @@ public class Reservation {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public int getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

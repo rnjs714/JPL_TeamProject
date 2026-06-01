@@ -1,86 +1,603 @@
 {
-  "users": [],
-  "movies": [
-    {
-      "id": "M1",
-      "title": "Dune: Part Two",
-      "runningMinutes": 166
-    },
-    {
-      "id": "M2",
-      "title": "Inside Out 2",
-      "runningMinutes": 96
-    },
-    {
-      "id": "M3",
-      "title": "Oppenheimer",
-      "runningMinutes": 180
-    },
-    {
-      "id": "M4",
-      "title": "The Dark Knight",
-      "runningMinutes": 152
-    }
-  ],
-  "theaters": [
-    {
-      "id": "T1",
-      "name": "Standard Hall 1",
-      "rows": 6,
-      "columns": 8,
-      "type": "STANDARD"
-    },
-    {
-      "id": "T2",
-      "name": "IMAX Hall",
-      "rows": 7,
-      "columns": 10,
-      "type": "IMAX"
-    },
-    {
-      "id": "T3",
-      "name": "4DX Hall",
-      "rows": 5,
-      "columns": 7,
-      "type": "FOUR_DX"
-    }
-  ],
-  "showtimes": [
-    {
-      "id": "S1",
-      "movieId": "M1",
-      "theaterId": "T2",
-      "startsAt": "2026-06-01T14:00:00",
-      "reservedSeats": []
-    },
-    {
-      "id": "S2",
-      "movieId": "M1",
-      "theaterId": "T1",
-      "startsAt": "2026-06-01T19:30:00",
-      "reservedSeats": []
-    },
-    {
-      "id": "S3",
-      "movieId": "M2",
-      "theaterId": "T3",
-      "startsAt": "2026-06-02T13:00:00",
-      "reservedSeats": []
-    },
-    {
-      "id": "S4",
-      "movieId": "M3",
-      "theaterId": "T1",
-      "startsAt": "2026-06-02T20:00:00",
-      "reservedSeats": []
-    },
-    {
-      "id": "S5",
-      "movieId": "M4",
-      "theaterId": "T2",
-      "startsAt": "2026-06-03T21:00:00",
-      "reservedSeats": []
-    }
-  ],
-  "reservations": []
+  "users" : [ {
+    "id" : "1234",
+    "password" : "1234"
+  }, {
+    "id" : "skku",
+    "password" : "skku"
+  }, {
+    "id" : "test",
+    "password" : "1234"
+  }, {
+    "id" : "rnjs1085",
+    "password" : "1234"
+  }, {
+    "id" : "rnjs714",
+    "password" : "1234"
+  }, {
+    "id" : "rnjs",
+    "password" : "1234"
+  }, {
+    "id" : "admin",
+    "password" : "1234567"
+  }, {
+    "id" : "account1",
+    "password" : "asdf"
+  } ],
+  "movies" : [ {
+    "id" : "M1",
+    "title" : "Dune: Part Two",
+    "runningMinutes" : 166
+  }, {
+    "id" : "M2",
+    "title" : "Inside Out 2",
+    "runningMinutes" : 96
+  }, {
+    "id" : "M3",
+    "title" : "Oppenheimer",
+    "runningMinutes" : 180
+  }, {
+    "id" : "M4",
+    "title" : "The Dark Knight",
+    "runningMinutes" : 152
+  }, {
+    "id" : "M5",
+    "title" : "Interstellar",
+    "runningMinutes" : 169
+  }, {
+    "id" : "M6",
+    "title" : "La La Land",
+    "runningMinutes" : 128
+  }, {
+    "id" : "M7",
+    "title" : "Parasite",
+    "runningMinutes" : 132
+  }, {
+    "id" : "M8",
+    "title" : "Spider-Man: Across the Spider-Verse",
+    "runningMinutes" : 140
+  }, {
+    "id" : "M9",
+    "title" : "Whiplash",
+    "runningMinutes" : 107
+  }, {
+    "id" : "M10",
+    "title" : "The Matrix",
+    "runningMinutes" : 136
+  } ],
+  "theaters" : [ {
+    "id" : "T1",
+    "name" : "Standard Hall 1",
+    "rows" : 6,
+    "columns" : 8,
+    "type" : "STANDARD"
+  }, {
+    "id" : "T2",
+    "name" : "IMAX Hall",
+    "rows" : 7,
+    "columns" : 10,
+    "type" : "IMAX"
+  }, {
+    "id" : "T3",
+    "name" : "4DX Hall",
+    "rows" : 5,
+    "columns" : 7,
+    "type" : "FOUR_DX"
+  }, {
+    "id" : "T4",
+    "name" : "Standard Hall 2",
+    "rows" : 6,
+    "columns" : 9,
+    "type" : "STANDARD"
+  }, {
+    "id" : "T5",
+    "name" : "Premium Standard Hall",
+    "rows" : 8,
+    "columns" : 9,
+    "type" : "STANDARD"
+  }, {
+    "id" : "T6",
+    "name" : "IMAX Hall 2",
+    "rows" : 8,
+    "columns" : 12,
+    "type" : "IMAX"
+  }, {
+    "id" : "T7",
+    "name" : "4DX Hall 2",
+    "rows" : 6,
+    "columns" : 8,
+    "type" : "FOUR_DX"
+  }, {
+    "id" : "T8",
+    "name" : "Standard Hall 3",
+    "rows" : 5,
+    "columns" : 10,
+    "type" : "STANDARD"
+  } ],
+  "showtimes" : [ {
+    "id" : "S1",
+    "movieId" : "M1",
+    "theaterId" : "T2",
+    "startsAt" : "2026-06-01T14:00:00",
+    "reservedSeats" : [ "A1", "A2", "C5", "B5", "B6" ]
+  }, {
+    "id" : "S2",
+    "movieId" : "M1",
+    "theaterId" : "T1",
+    "startsAt" : "2026-06-01T19:30:00",
+    "reservedSeats" : [ "F8" ]
+  }, {
+    "id" : "S3",
+    "movieId" : "M2",
+    "theaterId" : "T3",
+    "startsAt" : "2026-06-02T13:00:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S4",
+    "movieId" : "M3",
+    "theaterId" : "T1",
+    "startsAt" : "2026-06-02T20:00:00",
+    "reservedSeats" : [ "D4", "D3" ]
+  }, {
+    "id" : "S5",
+    "movieId" : "M4",
+    "theaterId" : "T2",
+    "startsAt" : "2026-06-03T21:00:00",
+    "reservedSeats" : [ "G9", "G10" ]
+  }, {
+    "id" : "S6",
+    "movieId" : "M2",
+    "theaterId" : "T4",
+    "startsAt" : "2026-06-03T10:30:00",
+    "reservedSeats" : [ "A1", "A2" ]
+  }, {
+    "id" : "S7",
+    "movieId" : "M3",
+    "theaterId" : "T5",
+    "startsAt" : "2026-06-03T15:20:00",
+    "reservedSeats" : [ "B2" ]
+  }, {
+    "id" : "S8",
+    "movieId" : "M1",
+    "theaterId" : "T6",
+    "startsAt" : "2026-06-03T18:40:00",
+    "reservedSeats" : [ "C3", "C4" ]
+  }, {
+    "id" : "S9",
+    "movieId" : "M4",
+    "theaterId" : "T8",
+    "startsAt" : "2026-06-04T11:00:00",
+    "reservedSeats" : [ "D5" ]
+  }, {
+    "id" : "S10",
+    "movieId" : "M2",
+    "theaterId" : "T7",
+    "startsAt" : "2026-06-04T13:30:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S11",
+    "movieId" : "M3",
+    "theaterId" : "T1",
+    "startsAt" : "2026-06-04T17:10:00",
+    "reservedSeats" : [ "A3" ]
+  }, {
+    "id" : "S12",
+    "movieId" : "M1",
+    "theaterId" : "T2",
+    "startsAt" : "2026-06-04T20:20:00",
+    "reservedSeats" : [ "B5", "B6" ]
+  }, {
+    "id" : "S13",
+    "movieId" : "M4",
+    "theaterId" : "T4",
+    "startsAt" : "2026-06-05T09:50:00",
+    "reservedSeats" : [ "C7" ]
+  }, {
+    "id" : "S14",
+    "movieId" : "M2",
+    "theaterId" : "T5",
+    "startsAt" : "2026-06-05T12:15:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S15",
+    "movieId" : "M3",
+    "theaterId" : "T6",
+    "startsAt" : "2026-06-05T16:00:00",
+    "reservedSeats" : [ "E10" ]
+  }, {
+    "id" : "S16",
+    "movieId" : "M1",
+    "theaterId" : "T7",
+    "startsAt" : "2026-06-05T19:10:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S17",
+    "movieId" : "M4",
+    "theaterId" : "T3",
+    "startsAt" : "2026-06-06T10:00:00",
+    "reservedSeats" : [ "A4" ]
+  }, {
+    "id" : "S18",
+    "movieId" : "M2",
+    "theaterId" : "T8",
+    "startsAt" : "2026-06-06T12:40:00",
+    "reservedSeats" : [ "B7", "B8" ]
+  }, {
+    "id" : "S19",
+    "movieId" : "M3",
+    "theaterId" : "T2",
+    "startsAt" : "2026-06-06T16:30:00",
+    "reservedSeats" : [ "C9" ]
+  }, {
+    "id" : "S20",
+    "movieId" : "M1",
+    "theaterId" : "T5",
+    "startsAt" : "2026-06-06T20:00:00",
+    "reservedSeats" : [ "D1", "D2" ]
+  }, {
+    "id" : "S21",
+    "movieId" : "M4",
+    "theaterId" : "T6",
+    "startsAt" : "2026-06-07T14:20:00",
+    "reservedSeats" : [ "E3" ]
+  }, {
+    "id" : "S22",
+    "movieId" : "M2",
+    "theaterId" : "T1",
+    "startsAt" : "2026-06-07T18:00:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S23",
+    "movieId" : "M5",
+    "theaterId" : "T6",
+    "startsAt" : "2026-06-08T11:00:00",
+    "reservedSeats" : [ "A6", "A7" ]
+  }, {
+    "id" : "S24",
+    "movieId" : "M5",
+    "theaterId" : "T2",
+    "startsAt" : "2026-06-08T19:30:00",
+    "reservedSeats" : [ "B9" ]
+  }, {
+    "id" : "S25",
+    "movieId" : "M6",
+    "theaterId" : "T4",
+    "startsAt" : "2026-06-08T13:20:00",
+    "reservedSeats" : [ "C1", "C2" ]
+  }, {
+    "id" : "S26",
+    "movieId" : "M6",
+    "theaterId" : "T8",
+    "startsAt" : "2026-06-08T21:10:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S27",
+    "movieId" : "M7",
+    "theaterId" : "T5",
+    "startsAt" : "2026-06-09T10:40:00",
+    "reservedSeats" : [ "E5", "G3", "G4", "G5", "E4" ]
+  }, {
+    "id" : "S28",
+    "movieId" : "M7",
+    "theaterId" : "T1",
+    "startsAt" : "2026-06-09T18:00:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S29",
+    "movieId" : "M8",
+    "theaterId" : "T7",
+    "startsAt" : "2026-06-09T12:30:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S30",
+    "movieId" : "M8",
+    "theaterId" : "T3",
+    "startsAt" : "2026-06-09T20:20:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S31",
+    "movieId" : "M9",
+    "theaterId" : "T4",
+    "startsAt" : "2026-06-10T14:00:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S32",
+    "movieId" : "M9",
+    "theaterId" : "T8",
+    "startsAt" : "2026-06-10T19:00:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S33",
+    "movieId" : "M10",
+    "theaterId" : "T6",
+    "startsAt" : "2026-06-10T16:10:00",
+    "reservedSeats" : [ ]
+  }, {
+    "id" : "S34",
+    "movieId" : "M10",
+    "theaterId" : "T2",
+    "startsAt" : "2026-06-10T22:00:00",
+    "reservedSeats" : [ ]
+  } ],
+  "reservations" : [ {
+    "id" : "R1780200000001",
+    "userId" : "skku",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "A1", "A2" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-30T20:05:00"
+  }, {
+    "id" : "R1780200000002",
+    "userId" : "test",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "C5" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-30T20:12:00"
+  }, {
+    "id" : "R1780200000004",
+    "userId" : "rnjs",
+    "showtimeId" : "S2",
+    "seatCodes" : [ "F8" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-30T20:38:00"
+  }, {
+    "id" : "R1780200000005",
+    "userId" : "rnjs714",
+    "showtimeId" : "S5",
+    "seatCodes" : [ "G9", "G10" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-30T20:44:00"
+  }, {
+    "id" : "R1780146997326",
+    "userId" : "rnjs1085",
+    "showtimeId" : "S4",
+    "seatCodes" : [ "D3", "D4" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-30T22:16:37.326179"
+  }, {
+    "id" : "R1780300000001",
+    "userId" : "skku",
+    "showtimeId" : "S6",
+    "seatCodes" : [ "A1", "A2" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T09:00:00"
+  }, {
+    "id" : "R1780300000002",
+    "userId" : "test",
+    "showtimeId" : "S7",
+    "seatCodes" : [ "B2" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T09:05:00"
+  }, {
+    "id" : "R1780300000003",
+    "userId" : "rnjs",
+    "showtimeId" : "S8",
+    "seatCodes" : [ "C3", "C4" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T09:10:00"
+  }, {
+    "id" : "R1780300000004",
+    "userId" : "rnjs714",
+    "showtimeId" : "S9",
+    "seatCodes" : [ "D5" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T09:15:00"
+  }, {
+    "id" : "R1780300000006",
+    "userId" : "rnjs1085",
+    "showtimeId" : "S11",
+    "seatCodes" : [ "A3" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T09:25:00"
+  }, {
+    "id" : "R1780300000007",
+    "userId" : "skku",
+    "showtimeId" : "S12",
+    "seatCodes" : [ "B5", "B6" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T09:30:00"
+  }, {
+    "id" : "R1780300000008",
+    "userId" : "test",
+    "showtimeId" : "S13",
+    "seatCodes" : [ "C7" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T09:35:00"
+  }, {
+    "id" : "R1780300000009",
+    "userId" : "rnjs",
+    "showtimeId" : "S14",
+    "seatCodes" : [ "D8", "D9" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T09:40:00"
+  }, {
+    "id" : "R1780300000010",
+    "userId" : "rnjs714",
+    "showtimeId" : "S15",
+    "seatCodes" : [ "E10" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T09:45:00"
+  }, {
+    "id" : "R1780300000012",
+    "userId" : "rnjs1085",
+    "showtimeId" : "S17",
+    "seatCodes" : [ "A4" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T09:55:00"
+  }, {
+    "id" : "R1780300000013",
+    "userId" : "skku",
+    "showtimeId" : "S18",
+    "seatCodes" : [ "B7", "B8" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T10:00:00"
+  }, {
+    "id" : "R1780300000014",
+    "userId" : "test",
+    "showtimeId" : "S19",
+    "seatCodes" : [ "C9" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T10:05:00"
+  }, {
+    "id" : "R1780300000015",
+    "userId" : "rnjs",
+    "showtimeId" : "S20",
+    "seatCodes" : [ "D1", "D2" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T10:10:00"
+  }, {
+    "id" : "R1780300000016",
+    "userId" : "rnjs714",
+    "showtimeId" : "S21",
+    "seatCodes" : [ "E3" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T10:15:00"
+  }, {
+    "id" : "R1780300000018",
+    "userId" : "rnjs1085",
+    "showtimeId" : "S23",
+    "seatCodes" : [ "A6", "A7" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T10:25:00"
+  }, {
+    "id" : "R1780300000019",
+    "userId" : "skku",
+    "showtimeId" : "S24",
+    "seatCodes" : [ "B9" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T10:30:00"
+  }, {
+    "id" : "R1780300000020",
+    "userId" : "test",
+    "showtimeId" : "S25",
+    "seatCodes" : [ "C1", "C2" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T10:35:00"
+  }, {
+    "id" : "R1780300000021",
+    "userId" : "rnjs",
+    "showtimeId" : "S26",
+    "seatCodes" : [ "D6" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T10:40:00"
+  }, {
+    "id" : "R1780300000022",
+    "userId" : "rnjs714",
+    "showtimeId" : "S27",
+    "seatCodes" : [ "E4", "E5" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T10:45:00"
+  }, {
+    "id" : "R1780152681333",
+    "userId" : "admin",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "B5", "B6" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-30T23:51:21.333161"
+  }, {
+    "id" : "R1780154670429",
+    "userId" : "1234",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "D6" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T00:24:30.430452"
+  }, {
+    "id" : "R1780157695585",
+    "userId" : "1234",
+    "showtimeId" : "S10",
+    "seatCodes" : [ "B4", "B5", "B6" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T01:14:55.585867"
+  }, {
+    "id" : "R1780157720816",
+    "userId" : "1234",
+    "showtimeId" : "S12",
+    "seatCodes" : [ "D5", "D6" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T01:15:20.816375"
+  }, {
+    "id" : "R1780157742548",
+    "userId" : "1234",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "D6" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T01:15:42.548056"
+  }, {
+    "id" : "R1780158441413",
+    "userId" : "rnjs",
+    "showtimeId" : "S13",
+    "seatCodes" : [ "F9", "E9", "D9" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T01:27:21.414454"
+  }, {
+    "id" : "R1780159321979",
+    "userId" : "1234",
+    "showtimeId" : "S12",
+    "seatCodes" : [ "A8" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T01:42:01.981014"
+  }, {
+    "id" : "R1780160505281",
+    "userId" : "account1",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "G1" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T02:01:45.281806"
+  }, {
+    "id" : "R1780160644839",
+    "userId" : "account1",
+    "showtimeId" : "S27",
+    "seatCodes" : [ "G3", "G4", "G5" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-05-31T02:04:04.840811"
+  }, {
+    "id" : "R1780161447451",
+    "userId" : "1234",
+    "showtimeId" : "S34",
+    "seatCodes" : [ "A1", "A2", "A3", "A4", "A5", "A6", "A7", "A8", "A9", "A10", "B1", "B2", "B3", "B4", "B5", "B6", "B7", "B8", "B9", "B10", "C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "C9", "C10", "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T02:17:27.452636"
+  }, {
+    "id" : "R1780164377344",
+    "userId" : "1234",
+    "showtimeId" : "S13",
+    "seatCodes" : [ "B5", "B6" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:06:17.345281"
+  }, {
+    "id" : "R1780166549886",
+    "userId" : "rnjs",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "D5" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:42:29.8879"
+  }, {
+    "id" : "R1780166558732",
+    "userId" : "1234",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "C4" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:42:38.732322"
+  }, {
+    "id" : "R1780166592779",
+    "userId" : "rnjs",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "A5" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:43:12.779034"
+  }, {
+    "id" : "R1780166631312",
+    "userId" : "rnjs",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "A4" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:43:51.31251"
+  }, {
+    "id" : "R1780166656165",
+    "userId" : "1234",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "A6", "A7" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-05-31T03:44:16.165547"
+  } ]
 }
