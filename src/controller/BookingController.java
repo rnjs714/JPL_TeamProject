@@ -50,6 +50,14 @@ public class BookingController {
         return bookingSession.getSelectedTheater();
     }
 
+    public Showtime getSelectedShowtime() {
+        return bookingSession.getSelectedShowtime();
+    }
+
+    public List<String> getSelectedSeats() {
+        return bookingSession.getSelectedSeats();
+    }
+
     public Set<String> getReservedSeats() {
         return bookingSession.getSelectedShowtime().getReservedSeats();
     }
