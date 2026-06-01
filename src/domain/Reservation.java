@@ -11,6 +11,7 @@ public class Reservation {
     private List<String> seatCodes;
     private ReservationStatus status;
     private LocalDateTime createdAt;
+    // 예약 확정 시 서버에서 계산한 최종 금액이다.
     private int totalPrice;
 
     public Reservation() {
@@ -95,5 +96,13 @@ public class Reservation {
 
     public void setTotalPrice(int totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    public int getPeopleCount() {
+        // 그룹 예매 인원 수는 예약된 좌석 수와 같다.
+        if(seatCodes == null) {
+            return 0;
+        }
+        return seatCodes.size();
     }
 }

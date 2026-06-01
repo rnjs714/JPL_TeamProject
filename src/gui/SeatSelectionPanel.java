@@ -19,8 +19,14 @@ import javax.swing.border.EmptyBorder;
 
 import controller.BookingController;
 import controller.NavigationController;
-import session.BookingSession; 
+import session.BookingSession;
 
+/**
+ * 좌석 선택 화면이다.
+ *
+ * 좌석 버튼에는 좌석 번호, 시야 점수, 가격을 함께 보여준다.
+ * 사용자가 인원 수를 입력하면 서버에서 그룹 좌석 추천을 받아 자동으로 선택할 수 있다.
+ */
 public class SeatSelectionPanel extends BasePanel implements Refreshable {
     private static final Dimension SCREEN_LABEL_SIZE = new Dimension(800, 44);
     private final BookingController bookingController;
@@ -32,8 +38,8 @@ public class SeatSelectionPanel extends BasePanel implements Refreshable {
     private final JTextField groupCountField;
     private final Map<String, JToggleButton> seatButtons;
 
-    public SeatSelectionPanel(BookingController bookingController, 
-                                BookingSession bookingSession, 
+    public SeatSelectionPanel(BookingController bookingController,
+                                BookingSession bookingSession,
                                 NavigationController navigationController) {
         super("Seats");
         this.bookingController = bookingController;
@@ -80,20 +86,17 @@ public class SeatSelectionPanel extends BasePanel implements Refreshable {
         buttonPanel.add(groupSelectButton);
         buttonPanel.add(reserveButton);
         add(buttonPanel, BorderLayout.SOUTH);
-
     }
 
     @Override
     public final void refresh() {
-        // TODO: Theater rows/columns 기준으로 좌석 버튼을 생성한다.
-        // TODO: 이미 예약된 좌석은 비활성화하고, 클릭한 좌석은 bookingSession.toggleSeat(...)로 선택 상태를 바꾼다.
         theaterNameLabel.setText(bookingSession.getSelectedTheater().getName());
-        
+
         seatGridPanel.removeAll();
         seatButtons.clear();
 
-        bookingSession.getSelectedSeats().clear(); // 좌석 선택 초기화
-
+        // 화면을 새로 그릴 때 이전 상영 시간에서 선택한 좌석이 남지 않도록 초기화한다.
+        bookingSession.getSelectedSeats().clear();
         updateSelectedPrice();
 
         int max_rows = bookingSession.getSelectedTheater().getRows();
@@ -104,7 +107,7 @@ public class SeatSelectionPanel extends BasePanel implements Refreshable {
         for(int row=0 ; row<max_rows ; row++) {
             for(int col=1 ; col<=max_cols ; col++) {
                 String seatId = "" + (char)(row + 'A') + col;
-                
+
                 JToggleButton seatButton = new JToggleButton(seatId);
                 seatButton.addActionListener(event -> {
                     bookingSession.toggleSeat(seatId);
@@ -116,6 +119,7 @@ public class SeatSelectionPanel extends BasePanel implements Refreshable {
                     seatButton.setEnabled(false);
                     seatButton.setText("<html><center>" + seatId + "<br/>Reserved</center></html>");
                 } else {
+                    // 예약 가능한 좌석에는 좌석 번호, 시야 점수, 가격을 같이 표시한다.
                     setSeatPriceText(seatButton, seatId);
                 }
                 seatButtons.put(seatId, seatButton);
@@ -129,6 +133,7 @@ public class SeatSelectionPanel extends BasePanel implements Refreshable {
 
     private void updateSelectedPrice() {
         try {
+            // 선택 좌석이 바뀔 때마다 서버에서 총 가격을 다시 계산한다.
             int totalPrice = bookingController.calculateSelectedSeatPrice();
             priceLabel.setText("Selected Price: " + formatPrice(totalPrice));
         } catch (IllegalStateException e) {

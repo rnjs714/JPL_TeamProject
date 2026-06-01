@@ -3,6 +3,8 @@ package domain;
 /**
  * Calculates a seat view score from its position in a theater layout.
  * Seats closer to the center receive a higher score.
+ *
+ * The score is kept between 1 and 10 so the pricing code can use it easily.
  */
 public class ViewScoreCalculator {
     public static final int MIN_SCORE = 1;
@@ -17,6 +19,9 @@ public class ViewScoreCalculator {
         }
 
         double distance = calculateDistanceFromCenter(theater, seatCode);
+
+        // A seat near the center has a small distance, so it receives a high score.
+        // A seat near the edge has a larger distance, so its score becomes lower.
         double normalizedDistance = distance / maxDistance;
         int score = (int) Math.round(MAX_SCORE - normalizedDistance * (MAX_SCORE - MIN_SCORE));
         return clamp(score, MIN_SCORE, MAX_SCORE);
@@ -25,6 +30,7 @@ public class ViewScoreCalculator {
     public double calculateDistanceFromCenter(Theater theater, String seatCode) {
         validateSeatPosition(theater, seatCode);
 
+        // Seat codes use a row letter and a column number, for example A1 or C5.
         int row = parseRow(seatCode);
         int column = parseColumn(seatCode);
         double centerRow = (theater.getRows() + 1) / 2.0;

@@ -87,6 +87,7 @@ public class BookingController {
             if(bookingSession.getSelectedSeats().isEmpty()) {
                 throw new IllegalStateException("예약할 좌석을 선택해주세요.");
             }
+            // 선택 좌석 목록을 그대로 서버에 보낸다. 좌석이 여러 개이면 그룹 예매로 처리된다.
             Response response = apiClient.send("RESERVE", Map.of(
                 "userId", userSession.getCurrentUser().getId(),
                 "showtimeId", bookingSession.getSelectedShowtime().getId(),
@@ -109,12 +110,14 @@ public class BookingController {
         if(bookingSession.getSelectedSeats().isEmpty()) {
             return 0;
         }
+        // 실제 가격 계산은 서버에 요청한다. 화면은 계산 결과만 받아서 표시한다.
         return apiClient.getDataFromServer("CALCULATE_PRICE", Map.of(
                 "showtimeId", bookingSession.getSelectedShowtime().getId(),
                 "seatCodes", bookingSession.getSelectedSeats()), new TypeReference<Integer>() {});
     }
 
     public Map<String, Object> calculateSeatPriceInfo(String seatCode) {
+        // 좌석 버튼에 표시할 시야 점수와 좌석 가격을 서버에서 받아온다.
         return apiClient.getDataFromServer("GET_SEAT_PRICE", Map.of(
                 "showtimeId", bookingSession.getSelectedShowtime().getId(),
                 "seatCode", seatCode), new TypeReference<Map<String, Object>>() {});
@@ -125,6 +128,7 @@ public class BookingController {
             throw new IllegalStateException("그룹 인원 수는 1명 이상이어야 합니다.");
         }
 
+        // 서버가 이미 예약된 좌석을 제외하고 인원 수에 맞는 좌석을 추천한다.
         return apiClient.getDataFromServer("FIND_GROUP_SEATS", Map.of(
                 "showtimeId", bookingSession.getSelectedShowtime().getId(),
                 "peopleCount", peopleCount), new TypeReference<List<String>>() {});

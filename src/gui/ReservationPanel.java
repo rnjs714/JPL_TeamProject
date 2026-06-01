@@ -82,6 +82,8 @@ public class ReservationPanel extends BasePanel implements Refreshable {
             JLabel theaterLabel = new JLabel("Theater: " + theater.getName());
             JLabel showtimeLabel = new JLabel("Showtime: " + showtime.getStartsAt());
             JLabel seatLabel = new JLabel("Seats: " + reservation.getSeatCodes());
+            // 좌석 수를 이용해 개인 예매인지 그룹 예매인지 쉽게 확인할 수 있다.
+            JLabel peopleLabel = new JLabel("People: " + reservation.getPeopleCount());
             JLabel statusLabel = new JLabel("Status: " + reservation.getStatus());
             JLabel priceLabel = new JLabel("Price: " + formatPrice(reservation.getTotalPrice()));
             JButton cancelButton = new JButton("Cancel");
@@ -98,6 +100,7 @@ public class ReservationPanel extends BasePanel implements Refreshable {
             infoPanel.add(theaterLabel);
             infoPanel.add(showtimeLabel);
             infoPanel.add(seatLabel);
+            infoPanel.add(peopleLabel);
             infoPanel.add(statusLabel);
             infoPanel.add(priceLabel);
             reservationPanel.add(infoPanel, BorderLayout.CENTER);
