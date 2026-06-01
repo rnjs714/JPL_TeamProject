@@ -1,7 +1,9 @@
 package controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
@@ -38,6 +40,44 @@ public class BookingController {
 
     public Theater getTheater(String theaterId) {
         return apiClient.getDataFromServer("GET_THEATER", Map.of("theaterId", theaterId), new TypeReference<Theater>() {});
+    }
+
+    public Movie getSelectedMovie() {
+        return bookingSession.getSelectedMovie();
+    }
+
+    public Theater getSelectedTheater() {
+        return bookingSession.getSelectedTheater();
+    }
+
+    public Set<String> getReservedSeats() {
+        return bookingSession.getSelectedShowtime().getReservedSeats();
+    }
+
+    public void resetSelectedMovie() {
+        bookingSession.setSelectedMovie(null);
+        bookingSession.setSelectedShowtime(null);
+        bookingSession.setSelectedTheater(null);
+        bookingSession.setSelectedSeats(new ArrayList<>());
+    }
+
+    public void resetSelectedShowtime() {
+        bookingSession.setSelectedShowtime(null);
+        bookingSession.setSelectedTheater(null);
+        bookingSession.setSelectedSeats(new ArrayList<>());
+    }
+
+    public void resetSelectedSeats() {
+        bookingSession.setSelectedSeats(new ArrayList<>());
+    }
+
+    public void toggleSeat(String seatCode) {
+        List<String> selectedSeats = bookingSession.getSelectedSeats();
+        if (selectedSeats.contains(seatCode)) {
+            selectedSeats.remove(seatCode);
+        } else {
+            selectedSeats.add(seatCode);
+        }
     }
 
     public List<Movie> loadMovies() {
@@ -82,7 +122,7 @@ public class BookingController {
 
     public void reserveSelectedSeats() {
         // TODO: 로그인 사용자 id, 선택된 showtime id, 선택 좌석 목록으로 RESERVE 요청을 보낸다.
-        // TODO: 성공하면 BookingSession을 clear하고 예매 내역 화면으로 이동한다.
+        // TODO: 성공하면 BookingSession 선택 값을 초기화하고 예매 내역 화면으로 이동한다.
         try {
             if(bookingSession.getSelectedSeats().isEmpty()) {
                 throw new IllegalStateException("예약할 좌석을 선택해주세요.");
@@ -93,7 +133,7 @@ public class BookingController {
                 "seatCodes", bookingSession.getSelectedSeats()));
             if(response.isSuccess()) {
                 navigationController.showMessage("Reservation successful!");
-                bookingSession.clear();
+                resetSelectedMovie();
                 navigationController.showReservations();
             } else {
                 navigationController.showMessage(response.getMessage());

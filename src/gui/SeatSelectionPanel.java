@@ -15,19 +15,17 @@ import javax.swing.border.EmptyBorder;
 
 import controller.BookingController;
 import controller.NavigationController;
-import session.BookingSession; 
 
 public class SeatSelectionPanel extends BasePanel implements Refreshable {
-    private static final Dimension SCREEN_LABEL_SIZE = new Dimension(800, 44);
-    private final BookingSession bookingSession;
+    private static final Dimension SCREEN_LABEL_SIZE = new Dimension(800, 50);
+    private final BookingController bookingController;
     private final JPanel seatGridPanel;
     private final JLabel theaterNameLabel;
 
     public SeatSelectionPanel(BookingController bookingController, 
-                                BookingSession bookingSession, 
                                 NavigationController navigationController) {
         super("Seats");
-        this.bookingSession = bookingSession;
+        this.bookingController = bookingController;
         this.seatGridPanel = new JPanel();
         this.theaterNameLabel = new JLabel("", SwingConstants.CENTER);
         theaterNameLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
@@ -66,15 +64,15 @@ public class SeatSelectionPanel extends BasePanel implements Refreshable {
     @Override
     public final void refresh() {
         // TODO: Theater rows/columns 기준으로 좌석 버튼을 생성한다.
-        // TODO: 이미 예약된 좌석은 비활성화하고, 클릭한 좌석은 bookingSession.toggleSeat(...)로 선택 상태를 바꾼다.
-        theaterNameLabel.setText(bookingSession.getSelectedTheater().getName());
+        // TODO: 이미 예약된 좌석은 비활성화하고, 클릭한 좌석은 BookingController로 선택 상태를 바꾼다.
+        theaterNameLabel.setText(bookingController.getSelectedTheater().getName());
         
         seatGridPanel.removeAll();
 
-        bookingSession.getSelectedSeats().clear(); // 좌석 선택 초기화
+        bookingController.resetSelectedSeats();
 
-        int max_rows = bookingSession.getSelectedTheater().getRows();
-        int max_cols = bookingSession.getSelectedTheater().getColumns();
+        int max_rows = bookingController.getSelectedTheater().getRows();
+        int max_cols = bookingController.getSelectedTheater().getColumns();
 
         seatGridPanel.setLayout(new GridLayout(max_rows, max_cols, 6, 6));
 
@@ -83,9 +81,9 @@ public class SeatSelectionPanel extends BasePanel implements Refreshable {
                 String seatId = "" + (char)(row + 'A') + col;
                 
                 JToggleButton seatButton = new JToggleButton(seatId);
-                seatButton.addActionListener(event -> bookingSession.toggleSeat(seatId));
+                seatButton.addActionListener(event -> bookingController.toggleSeat(seatId));
 
-                Set<String> reservedSeats = bookingSession.getSelectedShowtime().getReservedSeats();
+                Set<String> reservedSeats = bookingController.getReservedSeats();
                 if(reservedSeats.contains(seatId)) {
                     seatButton.setEnabled(false);
                 }

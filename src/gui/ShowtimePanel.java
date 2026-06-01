@@ -17,19 +17,16 @@ import javax.swing.border.EmptyBorder;
 import controller.BookingController;
 import controller.NavigationController;
 import domain.Showtime;
-import session.BookingSession;
 
 public class ShowtimePanel extends BasePanel implements Refreshable {
-    private static final Dimension ITEM_SIZE = new Dimension(800, 44);
+    private static final Dimension ITEM_SIZE = new Dimension(800, 50);
     private final BookingController bookingController;
-    private final BookingSession bookingSession;
     private final JPanel showtimeListPanel;
     private final JLabel movieTitleLabel;
 
-    public ShowtimePanel(BookingController bookingController, BookingSession bookingSession, NavigationController navigationController) {
+    public ShowtimePanel(BookingController bookingController, NavigationController navigationController) {
         super("Showtimes");
         this.bookingController = bookingController; 
-        this.bookingSession = bookingSession;
         this.showtimeListPanel = new JPanel();
         showtimeListPanel.setLayout(new BoxLayout(showtimeListPanel, BoxLayout.Y_AXIS));
         this.movieTitleLabel = new JLabel("", SwingConstants.CENTER);
@@ -48,11 +45,11 @@ public class ShowtimePanel extends BasePanel implements Refreshable {
     @Override
     public final void refresh() {
         // TODO: 선택된 영화의 상영 시간을 조회해 시간/상영관 정보가 보이는 버튼으로 표시한다.
-        movieTitleLabel.setText(bookingSession.getSelectedMovie().getTitle());
+        movieTitleLabel.setText(bookingController.getSelectedMovie().getTitle());
 
         showtimeListPanel.removeAll();
 
-        bookingSession.setSelectedShowtime(null);
+        bookingController.resetSelectedShowtime();
         
         List<Showtime> showtimes = bookingController.loadShowtimes();
         for (Showtime showtime : showtimes) {

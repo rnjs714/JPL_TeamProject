@@ -23,11 +23,10 @@ public class AuthController {
     }
 
     public void login(String id, String password) {
-        // TODO: LOGIN 요청을 보내고, 성공하면 응답 data를 User로 변환해서 userSession.login(user)를 호출한다.
         // TODO: 로그인 성공 후 영화 목록 화면으로 이동하고, 실패하면 LoginPanel에 오류 메시지를 보여준다.
         Response response = apiClient.send("LOGIN", Map.of("id", id, "password", password));
         if (response.isSuccess()) {
-            userSession.login(new User(id, password));
+            userSession.setCurrentUser(new User(id, password));
             navigationController.showHome();
         } else {
             navigationController.showMessage(response.getMessage());
@@ -45,7 +44,7 @@ public class AuthController {
     }
 
     public void logout() {
-        userSession.logout();
+        userSession.setCurrentUser(null);
         navigationController.showLogin();
     }
 }

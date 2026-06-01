@@ -46,9 +46,9 @@ public class MainFrame extends JFrame {
 
         rootPanel.add(new LoginPanel(authController), LOGIN_SCREEN);
         rootPanel.add(new HomePanel(authController, navigationController), HOME_SCREEN);
-        rootPanel.add(new MovieListPanel(bookingController, bookingSession, navigationController), MOVIE_SCREEN);
-        rootPanel.add(new ShowtimePanel(bookingController, bookingSession, navigationController), SHOWTIME_SCREEN);
-        rootPanel.add(new SeatSelectionPanel(bookingController, bookingSession, navigationController), SEAT_SCREEN);
+        rootPanel.add(new MovieListPanel(bookingController, navigationController), MOVIE_SCREEN);
+        rootPanel.add(new ShowtimePanel(bookingController, navigationController), SHOWTIME_SCREEN);
+        rootPanel.add(new SeatSelectionPanel(bookingController, navigationController), SEAT_SCREEN);
         rootPanel.add(new ReservationPanel(bookingController, navigationController), RESERVATION_SCREEN);
 
         setContentPane(rootPanel);

@@ -13,19 +13,16 @@ import javax.swing.JScrollPane;
 import controller.BookingController;
 import controller.NavigationController;
 import domain.Movie;
-import session.BookingSession;
 
 public class MovieListPanel extends BasePanel implements Refreshable {
-    private static final Dimension ITEM_SIZE = new Dimension(800, 44);
+    private static final Dimension ITEM_SIZE = new Dimension(800, 50);
 
     private final BookingController bookingController;
-    private final BookingSession bookingSession;
     private final JPanel movieListPanel;
 
-    public MovieListPanel(BookingController bookingController, BookingSession bookingSession, NavigationController navigationController) {
+    public MovieListPanel(BookingController bookingController, NavigationController navigationController) {
         super("Movies");
         this.bookingController = bookingController;
-        this.bookingSession = bookingSession;
         this.movieListPanel = new JPanel();
         movieListPanel.setLayout(new BoxLayout(movieListPanel, BoxLayout.Y_AXIS));
 
@@ -41,7 +38,7 @@ public class MovieListPanel extends BasePanel implements Refreshable {
         // TODO: 서버에서 영화 목록을 받아 영화 제목/상영시간이 보이는 버튼 또는 카드로 표시한다.
         movieListPanel.removeAll();
 
-        bookingSession.setSelectedMovie(null);
+        bookingController.resetSelectedMovie();
 
         List<Movie> movies = bookingController.loadMovies();
         for (Movie movie : movies) {

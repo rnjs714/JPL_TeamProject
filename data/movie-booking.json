@@ -599,5 +599,12 @@
     "seatCodes" : [ "A6", "A7" ],
     "status" : "CANCELED",
     "createdAt" : "2026-05-31T03:44:16.165547"
+  }, {
+    "id" : "R1780298084398",
+    "userId" : "1234",
+    "showtimeId" : "S7",
+    "seatCodes" : [ "F5", "F6", "F7" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-06-01T16:14:44.399886"
   } ]
 }
