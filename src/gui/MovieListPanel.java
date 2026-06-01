@@ -14,7 +14,6 @@ import javax.swing.JScrollPane;
 import controller.BookingController;
 import controller.NavigationController;
 import domain.Movie;
-import service.ApiException;
 
 public class MovieListPanel extends BasePanel implements Refreshable {
     private static final Dimension ITEM_SIZE = new Dimension(800, 50);
@@ -46,15 +45,8 @@ public class MovieListPanel extends BasePanel implements Refreshable {
 
         try {
             movies = bookingController.loadMovies();
-        } catch (ApiException e) {
-            movieListPanel.add(new JLabel("No movies found."));
-            revalidate();
-            repaint();
-            return;
-        }
-
-        if (movies.isEmpty()) {
-            movieListPanel.add(new JLabel("No movies found."));
+        } catch (IllegalStateException e) {
+            movieListPanel.add(new JLabel(e.getMessage()));
             revalidate();
             repaint();
             return;

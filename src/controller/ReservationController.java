@@ -23,7 +23,16 @@ public class ReservationController {
     }
 
     public List<Reservation> loadReservations() {
-        return apiService.getReservationList(userSession.getCurrentUser().getId());
+        try {
+            List<Reservation> reservations = apiService.getReservationList(userSession.getCurrentUser().getId());
+            if (reservations.isEmpty()) {
+                throw new IllegalStateException("No reservations found.");
+            }
+            return reservations;
+        } catch (ApiException e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+        
     }
 
     public Showtime getShowtime(String showtimeId) {

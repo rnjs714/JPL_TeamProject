@@ -17,7 +17,6 @@ import javax.swing.border.EmptyBorder;
 import controller.BookingController;
 import controller.NavigationController;
 import domain.Showtime;
-import service.ApiException;
 
 public class ShowtimePanel extends BasePanel implements Refreshable {
     private static final Dimension ITEM_SIZE = new Dimension(800, 50);
@@ -56,15 +55,8 @@ public class ShowtimePanel extends BasePanel implements Refreshable {
 
         try {
             showtimes = bookingController.loadShowtimes();
-        } catch (ApiException e) {
-            showtimeListPanel.add(new JLabel("No showtimes found."));
-            revalidate();
-            repaint();
-            return;
-        }
-
-        if (showtimes.isEmpty()) {
-            showtimeListPanel.add(new JLabel("No showtimes found."));
+        } catch (IllegalStateException e) {
+            showtimeListPanel.add(new JLabel(e.getMessage()));
             revalidate();
             repaint();
             return;

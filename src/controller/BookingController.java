@@ -27,6 +27,10 @@ public class BookingController {
         this.navigationController = navigationController;
     }
 
+    public Theater getTheater(String theaterId) {
+        return apiService.getTheater(theaterId);
+    }
+
     public Movie getSelectedMovie() {
         return bookingSession.getSelectedMovie();
     }
@@ -45,10 +49,6 @@ public class BookingController {
 
     public Set<String> getReservedSeats() {
         return bookingSession.getSelectedShowtime().getReservedSeats();
-    }
-
-    public Theater getTheater(String theaterId) {
-        return apiService.getTheater(theaterId);
     }
 
     public void resetSelectedMovie() {
@@ -77,22 +77,33 @@ public class BookingController {
         }
     }
 
+    public List<Movie> loadMovies() {
+        try {
+            List<Movie> movies = apiService.getMovieList();
+            if(movies.isEmpty()) {
+                throw new IllegalStateException("No movies found.");
+            }
+            return movies;
+        } catch (ApiException e) {
+            throw new IllegalStateException(e.getMessage());
+        }
+    }
+
     public void selectMovie(Movie movie) {
         bookingSession.setSelectedMovie(movie);
         navigationController.showShowtimes();
-    }
-
-    public List<Movie> loadMovies() {
-        return apiService.getMovieList();
     }
 
     public List<Showtime> loadShowtimes() {
         // TODO: 선택된 영화 id로 LIST_SHOWTIMES 요청을 보내고 List<Showtime>으로 변환해서 반환한다.
         try {
             List<Showtime> showtimes = apiService.getShowtimeList(bookingSession.getSelectedMovie().getId());
+            if(showtimes.isEmpty()) {
+                throw new IllegalStateException("No showtimes found for the selected movie.");
+            }
             return showtimes;
         } catch (ApiException e) {
-            throw e;
+            throw new IllegalStateException(e.getMessage());
         } 
     }
 
@@ -108,7 +119,8 @@ public class BookingController {
         // TODO: 성공하면 BookingSession 선택 값을 초기화하고 예매 내역 화면으로 이동한다.
         try {
             if(bookingSession.getSelectedSeats().isEmpty()) {
-                throw new IllegalStateException("Please select seats to reserve.");
+                navigationController.showMessage("Please select seats to reserve.");
+                return;
             }
             Reservation reservation = apiService.requestReservation(userSession.getCurrentUser().getId(), 
                                             bookingSession.getSelectedShowtime().getId(), 

@@ -21,7 +21,6 @@ import domain.Reservation;
 import domain.ReservationStatus;
 import domain.Showtime;
 import domain.Theater;
-import service.ApiException;
 
 public class ReservationPanel extends BasePanel implements Refreshable {
     private static final Dimension ITEM_SIZE = new Dimension(800, 150);
@@ -49,15 +48,8 @@ public class ReservationPanel extends BasePanel implements Refreshable {
         List<Reservation> reservations;
         try {
             reservations = reservationController.loadReservations();
-        } catch (ApiException e) {
-            reservationListPanel.add(new JLabel("No Reservations found."));
-            revalidate();
-            repaint();
-            return;
-        }
-
-        if (reservations.isEmpty()) {
-            reservationListPanel.add(new JLabel("No reservations found."));
+        } catch (IllegalStateException e) {
+            reservationListPanel.add(new JLabel(e.getMessage()));
             revalidate();
             repaint();
             return;

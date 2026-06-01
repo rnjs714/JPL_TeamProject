@@ -28,11 +28,11 @@ public class ApiClient implements Closeable {
             this.writer = new PrintWriter(socket.getOutputStream(), true);
             this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         } catch (IOException e) {
-            throw new IllegalStateException("Unable to connect to the server.", e);
+            throw new IllegalStateException("Unable to connect to the server.");
         }
     }
 
-    public Response send(String command, Map<String, Object> body) throws IllegalStateException {
+    public Response send(String command, Map<String, Object> body) {
         try {
             Request request = new Request(command, body);
             writer.println(objectMapper.writeValueAsString(request));
@@ -40,11 +40,11 @@ public class ApiClient implements Closeable {
             Response response = objectMapper.readValue(responseJson, Response.class);
             return response;
         } catch (IOException e) {
-            throw new IllegalStateException("Server communication failed.", e);
+            throw new IllegalStateException("Server communication failed.");
         }
     }
 
-    public <T> T getDataFromServer(String command, Map<String, Object> body, TypeReference<T> dataType) throws IllegalStateException {
+    public <T> T getDataFromServer(String command, Map<String, Object> body, TypeReference<T> dataType) {
         try {
             Response response = send(command, body);
             if (!response.isSuccess()) {
@@ -63,7 +63,7 @@ public class ApiClient implements Closeable {
                 socket.close();
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Failed to close the client socket.", e);
+            throw new IllegalStateException("Failed to close the client socket.");
         }
     }
 }
