@@ -28,7 +28,7 @@ public class ApiClient implements Closeable {
             this.writer = new PrintWriter(socket.getOutputStream(), true);
             this.objectMapper = new ObjectMapper().registerModule(new JavaTimeModule());
         } catch (IOException e) {
-            throw new IllegalStateException("서버에 연결할 수 없습니다.", e);
+            throw new IllegalStateException("Unable to connect to the server.", e);
         }
     }
 
@@ -40,7 +40,7 @@ public class ApiClient implements Closeable {
             Response response = objectMapper.readValue(responseJson, Response.class);
             return response;
         } catch (IOException e) {
-            throw new IllegalStateException("서버 통신 실패", e);
+            throw new IllegalStateException("Server communication failed.", e);
         }
     }
 
@@ -48,7 +48,7 @@ public class ApiClient implements Closeable {
         try {
             Response response = send(command, body);
             if (!response.isSuccess()) {
-                throw new IllegalStateException("API 요청 실패: " + response.getMessage());
+                throw new IllegalStateException(response.getMessage());
             }
             return objectMapper.convertValue(response.getData(), dataType);
         } catch (IllegalStateException e) {
@@ -63,7 +63,7 @@ public class ApiClient implements Closeable {
                 socket.close();
             }
         } catch (IOException e) {
-            throw new IllegalStateException("클라이언트 소켓 종료 실패", e);
+            throw new IllegalStateException("Failed to close the client socket.", e);
         }
     }
 }

@@ -14,8 +14,8 @@ public class Response {
         this.data = data;
     }
 
-    public static Response ok(String message, Object data) {
-        return new Response(true, message, data);
+    public static Response ok(Object data) {
+        return new Response(true, null, data);
     }
 
     public static Response fail(String message) {

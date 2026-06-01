@@ -26,7 +26,7 @@ public class MovieBookingServer {
                 thread.start();
             }
         } catch (IOException e) {
-            throw new IllegalStateException("서버 실행 실패", e);
+            throw new IllegalStateException("Failed to start the server.", e);
         }
     }
 }

@@ -43,7 +43,7 @@ public class ClientHandler implements Runnable {
                 writer.println(objectMapper.writeValueAsString(response));
             }
         } catch (IOException e) {
-            throw new IllegalStateException("클라이언트 요청 처리 실패", e);
+            throw new IllegalStateException("Failed to handle client request.", e);
         }
     }
 
@@ -72,9 +72,9 @@ public class ClientHandler implements Runnable {
         );
         boolean success = repository.register(newUser);
         if (success) {
-            return Response.ok("Registration successful", null);
+            return Response.ok(null);
         } else {
-            return Response.fail("Registration failed: ID already exists");
+            return Response.fail("ID already exists");
         }
     }
 
@@ -83,9 +83,9 @@ public class ClientHandler implements Runnable {
         try {
             User user = repository.login((String) body.get("id"), (String) body.get("password"));
             if (user != null) {
-                return Response.ok("Login successful", user);
+                return Response.ok(user);
             } else {
-                return Response.fail("Login failed: Invalid ID or password");
+                return Response.fail("Invalid ID or password");
             }
         } catch (IllegalArgumentException e) {
             return Response.fail(e.getMessage());
@@ -97,7 +97,7 @@ public class ClientHandler implements Runnable {
         try {
             List<Movie> movies = repository.findMovies();
             if(!movies.isEmpty()) {
-                return Response.ok("Movies retrieved successfully", movies);
+                return Response.ok(movies);
             } else {
                 return Response.fail("No movies available");
             }
@@ -111,7 +111,7 @@ public class ClientHandler implements Runnable {
         try {
             List<Showtime> showtimes = repository.findShowtimesByMovie((String) body.get("movieId"));
             if(!showtimes.isEmpty()) {
-                return Response.ok("Showtimes retrieved successfully", showtimes);
+                return Response.ok(showtimes);
             } else {
                 return Response.fail("No showtimes available for the selected movie");
             }
@@ -125,7 +125,7 @@ public class ClientHandler implements Runnable {
         try {
             Theater theater = repository.findTheater((String) body.get("theaterId"));
             if (theater != null) {
-                return Response.ok("Theater retrieved successfully", theater);
+                return Response.ok(theater);
             } else {
                 return Response.fail("Theater not found");
             }
@@ -139,7 +139,7 @@ public class ClientHandler implements Runnable {
         try {
             Movie movie = repository.findMovie((String) body.get("movieId"));
             if (movie != null) {
-                return Response.ok("Movie retrieved successfully", movie);
+                return Response.ok(movie);
             } else {
                 return Response.fail("Movie not found");
             }
@@ -153,7 +153,7 @@ public class ClientHandler implements Runnable {
         try {
             Showtime showtime = repository.findShowtime((String) body.get("showtimeId"));
             if (showtime != null) {
-                return Response.ok("Showtime retrieved successfully", showtime);
+                return Response.ok(showtime);
             } else {
                 return Response.fail("Showtime not found");
             }
@@ -169,7 +169,7 @@ public class ClientHandler implements Runnable {
             String showtimeId = (String) body.get("showtimeId");
             List<String> seatCodes = objectMapper.convertValue(body.get("seatCodes"), new TypeReference<List<String>>() {});
             Reservation reservation = repository.reserve(userId, showtimeId, seatCodes);
-            return Response.ok("Reservation successful", reservation);
+            return Response.ok(reservation);
         } catch (IllegalArgumentException e) {
             return Response.fail(e.getMessage());
         }
@@ -183,9 +183,9 @@ public class ClientHandler implements Runnable {
             String requesterId = (String) body.get("requesterId");
             Reservation reservation = repository.cancelReservation(reservationId, requesterId);
             if (reservation != null) {
-                return Response.ok("Reservation canceled successfully", reservation);
+                return Response.ok(reservation);
             } else {
-                return Response.fail("Cancellation failed: Reservation not found or unauthorized");
+                return Response.fail("Reservation not found or unauthorized");
             }
         } catch (IllegalArgumentException e) {
             return Response.fail(e.getMessage());
@@ -197,7 +197,7 @@ public class ClientHandler implements Runnable {
         try {
             List<Reservation> reservations = repository.findReservationsByUser((String) body.get("userId"));
             if(!reservations.isEmpty()) {
-                return Response.ok("Reservations retrieved successfully", reservations);
+                return Response.ok(reservations);
             } else {
                 return Response.fail("No reservations found for the user");
             }

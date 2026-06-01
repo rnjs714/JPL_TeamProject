@@ -7,12 +7,14 @@ import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 import controller.BookingController;
 import controller.NavigationController;
 import domain.Movie;
+import service.ApiException;
 
 public class MovieListPanel extends BasePanel implements Refreshable {
     private static final Dimension ITEM_SIZE = new Dimension(800, 50);
@@ -40,7 +42,25 @@ public class MovieListPanel extends BasePanel implements Refreshable {
 
         bookingController.resetSelectedMovie();
 
-        List<Movie> movies = bookingController.loadMovies();
+        List<Movie> movies;
+
+        try {
+            movies = bookingController.loadMovies();
+        } catch (ApiException e) {
+            movieListPanel.add(new JLabel("No movies found."));
+            revalidate();
+            repaint();
+            return;
+        }
+
+        if (movies.isEmpty()) {
+            movieListPanel.add(new JLabel("No movies found."));
+            revalidate();
+            repaint();
+            return;
+        }
+
+        
         for (Movie movie : movies) {
             JButton movieButton = new JButton(movie.getTitle());
             movieButton.setPreferredSize(ITEM_SIZE);

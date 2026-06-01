@@ -17,6 +17,7 @@ import javax.swing.border.EmptyBorder;
 import controller.BookingController;
 import controller.NavigationController;
 import domain.Showtime;
+import service.ApiException;
 
 public class ShowtimePanel extends BasePanel implements Refreshable {
     private static final Dimension ITEM_SIZE = new Dimension(800, 50);
@@ -26,7 +27,7 @@ public class ShowtimePanel extends BasePanel implements Refreshable {
 
     public ShowtimePanel(BookingController bookingController, NavigationController navigationController) {
         super("Showtimes");
-        this.bookingController = bookingController; 
+        this.bookingController = bookingController;
         this.showtimeListPanel = new JPanel();
         showtimeListPanel.setLayout(new BoxLayout(showtimeListPanel, BoxLayout.Y_AXIS));
         this.movieTitleLabel = new JLabel("", SwingConstants.CENTER);
@@ -51,7 +52,24 @@ public class ShowtimePanel extends BasePanel implements Refreshable {
 
         bookingController.resetSelectedShowtime();
         
-        List<Showtime> showtimes = bookingController.loadShowtimes();
+        List<Showtime> showtimes;
+
+        try {
+            showtimes = bookingController.loadShowtimes();
+        } catch (ApiException e) {
+            showtimeListPanel.add(new JLabel("No showtimes found."));
+            revalidate();
+            repaint();
+            return;
+        }
+
+        if (showtimes.isEmpty()) {
+            showtimeListPanel.add(new JLabel("No showtimes found."));
+            revalidate();
+            repaint();
+            return;
+        }
+
         for (Showtime showtime : showtimes) {
             String theaterName = bookingController.getTheater(showtime.getTheaterId()).getName();
             JButton showtimeButton = new JButton(theaterName + " | " + showtime.getStartsAt().toString());

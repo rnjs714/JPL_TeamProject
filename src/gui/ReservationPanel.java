@@ -14,23 +14,24 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
-import controller.BookingController;
 import controller.NavigationController;
+import controller.ReservationController;
 import domain.Movie;
 import domain.Reservation;
 import domain.ReservationStatus;
 import domain.Showtime;
 import domain.Theater;
+import service.ApiException;
 
 public class ReservationPanel extends BasePanel implements Refreshable {
     private static final Dimension ITEM_SIZE = new Dimension(800, 150);
-    private final BookingController bookingController;
+    private final ReservationController reservationController;
     private final JPanel reservationListPanel;
     
 
-    public ReservationPanel(BookingController bookingController, NavigationController navigationController) {
+    public ReservationPanel(ReservationController reservationController, NavigationController navigationController) {
         super("Reservations");
-        this.bookingController = bookingController;
+        this.reservationController = reservationController;
         this.reservationListPanel = new JPanel();
         reservationListPanel.setLayout(new BoxLayout(reservationListPanel, BoxLayout.Y_AXIS));
 
@@ -47,8 +48,8 @@ public class ReservationPanel extends BasePanel implements Refreshable {
 
         List<Reservation> reservations;
         try {
-            reservations = bookingController.loadReservations();
-        } catch (IllegalStateException e) {
+            reservations = reservationController.loadReservations();
+        } catch (ApiException e) {
             reservationListPanel.add(new JLabel("No Reservations found."));
             revalidate();
             repaint();
@@ -63,9 +64,9 @@ public class ReservationPanel extends BasePanel implements Refreshable {
         }
 
         for (Reservation reservation : reservations) {
-            Showtime showtime = bookingController.getShowtime(reservation.getShowtimeId());
-            Movie movie = bookingController.getMovie(showtime.getMovieId());
-            Theater theater = bookingController.getTheater(showtime.getTheaterId());
+            Showtime showtime = reservationController.getShowtime(reservation.getShowtimeId());
+            Movie movie = reservationController.getMovie(showtime.getMovieId());
+            Theater theater = reservationController.getTheater(showtime.getTheaterId());
 
             JPanel reservationPanel = new JPanel(new BorderLayout());
             reservationPanel.setPreferredSize(ITEM_SIZE);
@@ -88,7 +89,7 @@ public class ReservationPanel extends BasePanel implements Refreshable {
                 cancelButton.setEnabled(false);
             } else {
                 cancelButton.addActionListener(event -> {
-                bookingController.cancelReservation(reservation.getId());
+                reservationController.cancelReservation(reservation.getId());
                 refresh();
                 });
             }

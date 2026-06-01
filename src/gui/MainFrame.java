@@ -1,6 +1,8 @@
 package gui;
 
 import java.awt.CardLayout;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -10,6 +12,8 @@ import client.ApiClient;
 import controller.AuthController;
 import controller.BookingController;
 import controller.NavigationController;
+import controller.ReservationController;
+import service.ApiService;
 import session.BookingSession;
 import session.UserSession;
 
@@ -21,6 +25,7 @@ public class MainFrame extends JFrame {
     public static final String SEAT_SCREEN = "seat";
     public static final String RESERVATION_SCREEN = "reservation";
 
+    private final Map<String, JPanel> screenMap = new HashMap<>();
     private final JPanel rootPanel;
     private final CardLayout cardLayout;
 
@@ -31,7 +36,7 @@ public class MainFrame extends JFrame {
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        ApiClient apiClient = new ApiClient(host, port);
+        ApiService apiService = new ApiService(new ApiClient(host, port));
         UserSession userSession = new UserSession();
         BookingSession bookingSession = new BookingSession();
 
@@ -40,30 +45,30 @@ public class MainFrame extends JFrame {
         rootPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
 
         NavigationController navigationController = new NavigationController(this);
-        AuthController authController = new AuthController(apiClient, userSession, navigationController);
-        BookingController bookingController = new BookingController(apiClient, userSession, bookingSession,
+        AuthController authController = new AuthController(apiService, userSession, navigationController);
+        BookingController bookingController = new BookingController(apiService, userSession, bookingSession,
+                navigationController);
+        ReservationController reservationController = new ReservationController(apiService, userSession,
                 navigationController);
 
-        rootPanel.add(new LoginPanel(authController), LOGIN_SCREEN);
-        rootPanel.add(new HomePanel(authController, navigationController), HOME_SCREEN);
-        rootPanel.add(new MovieListPanel(bookingController, navigationController), MOVIE_SCREEN);
-        rootPanel.add(new ShowtimePanel(bookingController, navigationController), SHOWTIME_SCREEN);
-        rootPanel.add(new SeatSelectionPanel(bookingController, navigationController), SEAT_SCREEN);
-        rootPanel.add(new ReservationPanel(bookingController, navigationController), RESERVATION_SCREEN);
-
+        addScreen(LOGIN_SCREEN, new LoginPanel(authController));
+        addScreen(HOME_SCREEN, new HomePanel(authController, navigationController));
+        addScreen(MOVIE_SCREEN, new MovieListPanel(bookingController, navigationController));
+        addScreen(SHOWTIME_SCREEN, new ShowtimePanel(bookingController, navigationController));
+        addScreen(SEAT_SCREEN, new SeatSelectionPanel(bookingController, navigationController));
+        addScreen(RESERVATION_SCREEN, new ReservationPanel(reservationController, navigationController));
+        
         setContentPane(rootPanel);
         showScreen(LOGIN_SCREEN);
     }
 
+    public final void addScreen(String screenName, JPanel panel) {
+        screenMap.put(screenName, panel);
+        rootPanel.add(panel, screenName);
+    }
+
     public final void showScreen(String screenName) {
-        JPanel targetPanel = switch (screenName) {
-            case HOME_SCREEN -> (JPanel) rootPanel.getComponent(1);
-            case MOVIE_SCREEN -> (JPanel) rootPanel.getComponent(2);
-            case SHOWTIME_SCREEN -> (JPanel) rootPanel.getComponent(3);
-            case SEAT_SCREEN -> (JPanel) rootPanel.getComponent(4);
-            case RESERVATION_SCREEN -> (JPanel) rootPanel.getComponent(5);
-            default -> null;
-        };
+        JPanel targetPanel = screenMap.get(screenName);
         if (targetPanel instanceof Refreshable refreshable) {
             refreshable.refresh();
         }

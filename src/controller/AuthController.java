@@ -1,19 +1,17 @@
 package controller;
 
-import java.util.Map;
-
-import client.ApiClient;
 import domain.User;
-import protocol.Response;
+import service.ApiException;
+import service.ApiService;
 import session.UserSession;
 
 public class AuthController {
-    private final ApiClient apiClient;
+    private final ApiService apiService;
     private final UserSession userSession;
     private final NavigationController navigationController;
 
-    public AuthController(ApiClient apiClient, UserSession userSession, NavigationController navigationController) {
-        this.apiClient = apiClient;
+    public AuthController(ApiService apiService, UserSession userSession, NavigationController navigationController) {
+        this.apiService = apiService;
         this.userSession = userSession;
         this.navigationController = navigationController;
     }
@@ -24,22 +22,30 @@ public class AuthController {
 
     public void login(String id, String password) {
         // TODO: 로그인 성공 후 영화 목록 화면으로 이동하고, 실패하면 LoginPanel에 오류 메시지를 보여준다.
-        Response response = apiClient.send("LOGIN", Map.of("id", id, "password", password));
-        if (response.isSuccess()) {
-            userSession.setCurrentUser(new User(id, password));
+        try {
+            if(id.isBlank() || password.isBlank()) {
+                navigationController.showMessage("ID and password cannot be empty.");
+                return;
+            }
+            User user = apiService.login(id, password);
+            userSession.setCurrentUser(user);
             navigationController.showHome();
-        } else {
-            navigationController.showMessage(response.getMessage());
+        } catch (ApiException e) {
+            navigationController.showMessage(e.getMessage());
         }
     }
 
     public void register(String id, String password) {
         // TODO: REGISTER 요청을 보내고, 성공/실패 메시지를 LoginPanel에 표시한다.
-        Response response = apiClient.send("REGISTER", Map.of("id", id, "password", password));
-        if (response.isSuccess()) {
-            navigationController.showMessage(response.getMessage());
-        } else {
-            navigationController.showMessage(response.getMessage());
+        try {
+            if(id.isBlank() || password.isBlank()) {
+                navigationController.showMessage("ID and password cannot be empty.");
+                return;
+            }
+            apiService.register(id, password);
+            navigationController.showMessage("Registration successful! Please log in.");
+        } catch (ApiException e) {
+            navigationController.showMessage(e.getMessage());
         }
     }
 
