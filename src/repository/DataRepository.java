@@ -155,32 +155,28 @@ public class DataRepository {
     }
 
     public synchronized Reservation reserve(String userId, String showtimeId, List<String> seatCodes) {
-        try {
-            User user = findUser(userId);
-            if (user == null) {
-                throw new IllegalArgumentException("Wrong User ID.");
-            }
-            Showtime showtime = findShowtime(showtimeId);
-            if (showtime == null) {
-                throw new IllegalArgumentException("Wrong Showtime ID.");
-            }
-            validateReservationInput(showtimeId, seatCodes);
-            showtime.getReservedSeats().addAll(seatCodes);
-            Reservation reservation = new Reservation(
-                    "R" + System.currentTimeMillis(),
-                    user.getId(),
-                    showtime.getId(),
-                    seatCodes,
-                    ReservationStatus.CONFIRMED,
-                    LocalDateTime.now()
-            );
-            List<Reservation> reservations = data.getReservations();
-            reservations.add(reservation);
-            write();
-            return reservation;
-        } catch (IllegalArgumentException e) {
-            throw e;
+        User user = findUser(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("Wrong User ID.");
         }
+        Showtime showtime = findShowtime(showtimeId);
+        if (showtime == null) {
+            throw new IllegalArgumentException("Wrong Showtime ID.");
+        }
+        validateReservationInput(showtimeId, seatCodes);
+        showtime.getReservedSeats().addAll(seatCodes);
+        Reservation reservation = new Reservation(
+                "R" + System.currentTimeMillis(),
+                user.getId(),
+                showtime.getId(),
+                seatCodes,
+                ReservationStatus.CONFIRMED,
+                LocalDateTime.now()
+        );
+        List<Reservation> reservations = data.getReservations();
+        reservations.add(reservation);
+        write();
+        return reservation;
     }
 
     public synchronized Reservation cancelReservation(String reservationId, String requesterId) {
@@ -204,8 +200,9 @@ public class DataRepository {
 
     private void validateReservationInput(String showtimeId, List<String> seatCodes) {
         for (String seat : seatCodes) {
-            validateSeat(findTheater(findShowtime(showtimeId).getTheaterId()), seat);
-            if (findShowtime(showtimeId).getReservedSeats().contains(seat)) {
+            Showtime showtime = findShowtime(showtimeId);   
+            validateSeat(findTheater(showtime.getTheaterId()), seat);
+            if (showtime.getReservedSeats().contains(seat)) {
                 throw new IllegalArgumentException("Seat already reserved: " + seat);
             }
         }

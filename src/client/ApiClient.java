@@ -45,15 +45,11 @@ public class ApiClient implements Closeable {
     }
 
     public <T> T getDataFromServer(String command, Map<String, Object> body, TypeReference<T> dataType) {
-        try {
-            Response response = send(command, body);
-            if (!response.isSuccess()) {
-                throw new IllegalStateException(response.getMessage());
-            }
-            return objectMapper.convertValue(response.getData(), dataType);
-        } catch (IllegalStateException e) {
-            throw e;
+        Response response = send(command, body);
+        if (!response.isSuccess()) {
+            throw new IllegalStateException(response.getMessage());
         }
+        return objectMapper.convertValue(response.getData(), dataType);
     }
 
     @Override

@@ -19,12 +19,12 @@ public class Theater {
     }
 
     public boolean isValidSeat(String seatCode) {
-        if (seatCode == null || !seatCode.matches("[A-Za-z][1-9][0-9]*")) {
+        if (seatCode == null) {
             return false;
         }
         int row = Character.toUpperCase(seatCode.charAt(0)) - 'A';
         int column = Integer.parseInt(seatCode.substring(1));
-        return row >= 0 && row < rows && column >= 1 && column <= columns;
+        return 0 <= row && row < rows && 1 <= column && column <= columns;
     }
 
     public String getId() {

@@ -118,7 +118,8 @@ public class BookingController {
         // TODO: 로그인 사용자 id, 선택된 showtime id, 선택 좌석 목록으로 RESERVE 요청을 보낸다.
         // TODO: 성공하면 BookingSession 선택 값을 초기화하고 예매 내역 화면으로 이동한다.
         try {
-            if(bookingSession.getSelectedSeats().isEmpty()) {
+            List<String> selectedSeats = bookingSession.getSelectedSeats();
+            if(selectedSeats == null || selectedSeats.isEmpty()) {
                 navigationController.showMessage("Please select seats to reserve.");
                 return;
             }

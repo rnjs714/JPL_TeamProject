@@ -91,6 +91,6 @@ public class ApiService {
             }
         } catch (IllegalStateException e) {
             throw new ApiException(failureMessage + " " + e.getMessage());
-        }
+        } 
     }
 }
