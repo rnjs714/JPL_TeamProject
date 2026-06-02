@@ -1,4 +1,4 @@
-package server;
+package repository;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +20,6 @@ import domain.Showtime;
 import domain.Theater;
 import domain.TheaterType;
 import domain.User;
-import repository.MovieBookingData;
 
 // 테스트 도메인 데이터 생성
 public class randomDomainGenerator {

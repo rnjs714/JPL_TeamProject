@@ -40,7 +40,7 @@ Windows 환경에서 직접 실행하는 경우 classpath 구분자가 `:` 대�
 
 ```sh
 ./compile.sh
-java -cp "out;lib/*" server.randomDomainGenerator
+java -cp "out;lib/*" repository.randomDomainGenerator
 ```
 
 제출 시에는 `src/`, `data/`, `lib/`, `compile.sh`, `run-server.sh`, `run-client.sh`, `generate-data.sh`, `README.md`를 포함해야 합니다. `out/`과 `target/`은 컴파일 결과물이므로 제출하지 않아도 됩니다.
@@ -94,6 +94,7 @@ JSON 파일 기반 데이터 저장소입니다.
 
 - `MovieBookingData`: JSON 파일 전체 구조를 표현하는 루트 데이터 클래스입니다.
 - `DataRepository`: 서버 실행 시 JSON 파일을 읽어 메모리에 보관하고, 회원/영화/상영관/상영일정/예약 데이터를 조회하거나 수정합니다. 변경이 생기면 `movie-booking.json`에 다시 저장합니다.
+- `randomDomainGenerator`: 테스트용 사용자, 영화, 상영관, 상영 일정, 예약 데이터를 생성해 JSON 파일에 저장합니다.
 
 `DataRepository`의 주요 기능은 다음과 같습니다.
 
@@ -112,7 +113,6 @@ JSON 파일 기반 데이터 저장소입니다.
 
 - `MovieBookingServer`: 서버 시작점입니다. `ServerSocket`으로 클라이언트 연결을 받고, 연결마다 `ClientHandler`를 별도 스레드로 실행합니다.
 - `ClientHandler`: 클라이언트 요청을 읽고 command에 따라 로그인, 영화 목록, 예매, 취소 등의 작업으로 분기합니다.
-- `randomDomainGenerator`: 테스트용 사용자, 영화, 상영관, 상영 일정, 예약 데이터를 생성해 JSON 파일에 저장합니다.
 
 ### `protocol`
 

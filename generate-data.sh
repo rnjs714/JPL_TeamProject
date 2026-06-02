@@ -4,4 +4,4 @@ set -e
 CLASSPATH="out:lib/*"
 
 ./compile.sh
-java -cp "$CLASSPATH" server.randomDomainGenerator
+java -cp "$CLASSPATH" repository.randomDomainGenerator
