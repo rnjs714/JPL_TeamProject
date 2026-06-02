@@ -8,7 +8,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EmptyBorder;
 
-import client.ApiClient;
+import client.SocketClient;
 import controller.AuthController;
 import controller.BookingController;
 import controller.NavigationController;
@@ -43,7 +43,7 @@ public class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         // API 클라이언트/서비스, 세션, 컨트롤러 초기화
-        ApiService apiService = new ApiService(new ApiClient(host, port));
+        ApiService apiService = new ApiService(new SocketClient(host, port));
         UserSession userSession = new UserSession();
         BookingSession bookingSession = new BookingSession();
 

@@ -53,7 +53,7 @@ java -cp "out;lib/*" server.randomDomainGenerator
 GUI Panel
   -> Controller
     -> ApiService
-      -> ApiClient
+      -> SocketClient
         -> Socket
           -> ClientHandler
             -> DataRepository
@@ -66,7 +66,7 @@ GUI Panel
 movie-booking.json
   -> DataRepository
     -> ClientHandler
-      -> ApiClient
+      -> SocketClient
         -> ApiService
           -> Controller
             -> GUI Panel
@@ -125,13 +125,13 @@ JSON 파일 기반 데이터 저장소입니다.
 
 서버와의 실제 소켓 통신을 담당합니다.
 
-- `ApiClient`: `Request` 객체를 JSON으로 직렬화해 서버에 보내고, 서버 응답 JSON을 `Response` 객체로 역직렬화합니다.
+- `SocketClient`: `Request` 객체를 JSON으로 직렬화해 서버에 보내고, 서버 응답 JSON을 `Response` 객체로 역직렬화합니다.
 
 ### `service`
 
 클라이언트에서 서버 API를 메서드 형태로 사용할 수 있게 감쌉니다.
 
-- `ApiService`: 서버 command 문자열과 요청 body 생성을 한 곳에서 관리합니다. `ApiClient`를 이용해 서버에 요청하고, 응답 데이터를 도메인 객체로 변환합니다.
+- `ApiService`: 서버 command 문자열과 요청 body 생성을 한 곳에서 관리합니다. `SocketClient`를 이용해 서버에 요청하고, 응답 데이터를 도메인 객체로 변환합니다.
 - `ApiException`: 서버 요청 실패, 통신 실패, 응답 변환 실패를 컨트롤러에 전달하기 위한 예외입니다.
 
 ### `controller`
@@ -156,7 +156,7 @@ GUI 이벤트를 받아 세션 값을 변경하고 화면 흐름을 제어합니
 
 Swing 화면을 담당합니다.
 
-- `MovieBookingGui`: GUI 프로그램의 시작점입니다.
+- `MovieBookingClient`: GUI 클라이언트 프로그램의 시작점입니다.
 - `MainFrame`: 전체 화면을 `CardLayout`으로 관리합니다. 화면 이름과 패널 객체를 `Map<String, JPanel>`로 묶어 저장합니다.
 - `BasePanel`: 공통 타이틀 영역과 콘텐츠 영역을 제공하는 패널 부모 클래스입니다.
 - `Refreshable`: 화면 진입 시 데이터를 갱신해야 하는 패널이 구현하는 인터페이스입니다.

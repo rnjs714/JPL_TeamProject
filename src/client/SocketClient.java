@@ -16,14 +16,14 @@ import protocol.Request;
 import protocol.Response;
 
 // 클라이언트 소켓 통신
-public class ApiClient implements Closeable {
+public class SocketClient implements Closeable {
     private Socket socket;
     private BufferedReader reader;
     private PrintWriter writer;
     private ObjectMapper objectMapper;
 
     // 서버 연결 초기화
-    public ApiClient(String host, int port) {
+    public SocketClient(String host, int port) {
         try {
             this.socket = new Socket(host, port);
             this.reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));

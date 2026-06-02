@@ -5,7 +5,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 
-import client.ApiClient;
+import client.SocketClient;
 import domain.Movie;
 import domain.Reservation;
 import domain.Showtime;
@@ -15,11 +15,11 @@ import protocol.Response;
 
 // 서버 API 호출 모음
 public class ApiService {
-    private final ApiClient apiClient;
+    private final SocketClient socketClient;
 
     // API 클라이언트 연결
-    public ApiService(ApiClient apiClient) {
-        this.apiClient = apiClient;
+    public ApiService(SocketClient socketClient) {
+        this.socketClient = socketClient;
     }
 
     // 로그인 요청
@@ -88,7 +88,7 @@ public class ApiService {
     private <T> T requestData(String command, Map<String, Object> body, TypeReference<T> dataType,
             String failureMessage) {
         try {
-            return apiClient.getDataFromServer(command, body, dataType);
+            return socketClient.getDataFromServer(command, body, dataType);
         } catch (ClassCastException e) { // 응답 데이터 형식이 예상과 다를 때 예외 처리
             throw new ApiException(failureMessage + " Invalid response data format.");
         } catch (IllegalStateException e) { // API 호출 실패 시 예외 처리
@@ -99,7 +99,7 @@ public class ApiService {
     // 성공 여부 요청
     private void sendRequest(String command, Map<String, Object> body, String failureMessage) {
         try {
-            Response response = apiClient.send(command, body);
+            Response response = socketClient.send(command, body);
             if(!response.isSuccess()) { // API 호출 실패 시 예외 처리
                 throw new ApiException(failureMessage + " " + response.getMessage());
             }
