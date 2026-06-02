@@ -9,7 +9,7 @@ Java Swing, Socket, Jackson 기반의 영화 예매 프로그램입니다. 사�
 처음 실행하는 경우 스크립트 실행 권한을 부여합니다.
 
 ```sh
-chmod +x compile.sh run-server.sh run-gui.sh generate-data.sh
+chmod +x compile.sh run-server.sh run-client.sh generate-data.sh
 ```
 
 컴파일만 수행하려면 다음 명령을 사용합니다.
@@ -27,7 +27,7 @@ chmod +x compile.sh run-server.sh run-gui.sh generate-data.sh
 다른 터미널에서 GUI 클라이언트를 실행합니다.
 
 ```sh
-./run-gui.sh
+./run-client.sh
 ```
 
 임의의 테스트 데이터를 다시 생성하려면 다음 명령을 실행합니다.
@@ -43,7 +43,7 @@ Windows 환경에서 직접 실행하는 경우 classpath 구분자가 `:` 대�
 java -cp "out;lib/*" server.randomDomainGenerator
 ```
 
-제출 시에는 `src/`, `data/`, `lib/`, `compile.sh`, `run-server.sh`, `run-gui.sh`, `generate-data.sh`, `README.md`를 포함해야 합니다. `out/`과 `target/`은 컴파일 결과물이므로 제출하지 않아도 됩니다.
+제출 시에는 `src/`, `data/`, `lib/`, `compile.sh`, `run-server.sh`, `run-client.sh`, `generate-data.sh`, `README.md`를 포함해야 합니다. `out/`과 `target/`은 컴파일 결과물이므로 제출하지 않아도 됩니다.
 
 ## 전체 구조
 
