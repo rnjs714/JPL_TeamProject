@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+// 예매 정보
 public class Reservation {
     private String id;
     private String userId;
@@ -12,12 +13,14 @@ public class Reservation {
     private ReservationStatus status;
     private LocalDateTime createdAt;
 
+    // JSON 역직렬화
     public Reservation() {
         this.seatCodes = new ArrayList<>();
         this.status = ReservationStatus.CONFIRMED;
         this.createdAt = LocalDateTime.now();
     }
 
+    // 전체 값 생성
     public Reservation(String id, String userId, String showtimeId, List<String> seatCodes, ReservationStatus status, LocalDateTime createdAt) {
         this.id = id;
         this.userId = userId;
@@ -27,14 +30,17 @@ public class Reservation {
         this.createdAt = createdAt;
     }
 
+    // 예매 확정
     public void confirm() {
         this.status = ReservationStatus.CONFIRMED;
     }
 
+    // 예매 취소
     public void cancel() {
         this.status = ReservationStatus.CANCELED;
     }
 
+    // 필드 접근자
     public String getId() {
         return id;
     }

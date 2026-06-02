@@ -125,7 +125,7 @@
     "movieId" : "M1",
     "theaterId" : "T1",
     "startsAt" : "2026-06-01T10:00:00",
-    "reservedSeats" : [ "A1", "A4", "A5" ]
+    "reservedSeats" : [ "A1", "D4", "A3", "A4", "A5" ]
   }, {
     "id" : "S2",
     "movieId" : "M2",
@@ -245,7 +245,7 @@
     "movieId" : "M1",
     "theaterId" : "T5",
     "startsAt" : "2026-06-05T10:00:00",
-    "reservedSeats" : [ "H6" ]
+    "reservedSeats" : [ ]
   }, {
     "id" : "S22",
     "movieId" : "M2",
@@ -470,7 +470,7 @@
     "userId" : "1234",
     "showtimeId" : "S21",
     "seatCodes" : [ "H6" ],
-    "status" : "CONFIRMED",
+    "status" : "CANCELED",
     "createdAt" : "2026-05-31T10:40:00"
   }, {
     "id" : "R1780300000022",
@@ -577,5 +577,19 @@
     "seatCodes" : [ "A1" ],
     "status" : "CONFIRMED",
     "createdAt" : "2026-06-02T02:49:25.653253"
+  }, {
+    "id" : "R1780366380527",
+    "userId" : "1234",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "D4" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-06-02T11:13:00.52924"
+  }, {
+    "id" : "R1780382071710",
+    "userId" : "1234",
+    "showtimeId" : "S1",
+    "seatCodes" : [ "A3" ],
+    "status" : "CONFIRMED",
+    "createdAt" : "2026-06-02T15:34:31.711091"
   } ]
 }

@@ -9,6 +9,7 @@ import domain.User;
 import java.util.ArrayList;
 import java.util.List;
 
+// JSON 루트 데이터
 public class MovieBookingData {
     private List<User> users;
     private List<Movie> movies;
@@ -16,6 +17,7 @@ public class MovieBookingData {
     private List<Showtime> showtimes;
     private List<Reservation> reservations;
 
+    // 빈 데이터 초기화
     public MovieBookingData() {
         this.users = new ArrayList<>();
         this.movies = new ArrayList<>();
@@ -24,6 +26,7 @@ public class MovieBookingData {
         this.reservations = new ArrayList<>();
     }
 
+    // 사용자 목록 접근자
     public List<User> getUsers() {
         return users;
     }
@@ -32,6 +35,7 @@ public class MovieBookingData {
         this.users = users;
     }
 
+    // 영화 목록 접근자
     public List<Movie> getMovies() {
         return movies;
     }
@@ -40,6 +44,7 @@ public class MovieBookingData {
         this.movies = movies;
     }
 
+    // 상영관 목록 접근자
     public List<Theater> getTheaters() {
         return theaters;
     }
@@ -48,6 +53,7 @@ public class MovieBookingData {
         this.theaters = theaters;
     }
 
+    // 상영 일정 목록 접근자
     public List<Showtime> getShowtimes() {
         return showtimes;
     }
@@ -56,6 +62,7 @@ public class MovieBookingData {
         this.showtimes = showtimes;
     }
 
+    // 예매 목록 접근자
     public List<Reservation> getReservations() {
         return reservations;
     }

@@ -7,16 +7,19 @@ import domain.Movie;
 import domain.Showtime;
 import domain.Theater;
 
+// 예매 진행 상태
 public class BookingSession {
     private Movie selectedMovie;
     private Showtime selectedShowtime;
     private Theater selectedTheater;
     private List<String> selectedSeats;
 
+    // 기본 선택값 초기화
     public BookingSession() {
         this.selectedSeats = new ArrayList<>();
     }
 
+    // 선택 영화 접근자
     public Movie getSelectedMovie() {
         return selectedMovie;
     }
@@ -25,6 +28,7 @@ public class BookingSession {
         this.selectedMovie = selectedMovie;
     }
 
+    // 선택 상영 일정 접근자
     public Showtime getSelectedShowtime() {
         return selectedShowtime;
     }
@@ -33,6 +37,7 @@ public class BookingSession {
         this.selectedShowtime = selectedShowtime;
     }
 
+    // 선택 상영관 접근자
     public Theater getSelectedTheater() {
         return selectedTheater;
     }
@@ -41,6 +46,7 @@ public class BookingSession {
         this.selectedTheater = selectedTheater;
     }
 
+    // 선택 좌석 접근자
     public List<String> getSelectedSeats() {
         return selectedSeats;
     }

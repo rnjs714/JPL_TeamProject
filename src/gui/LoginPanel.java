@@ -12,10 +12,12 @@ import javax.swing.JTextField;
 
 import controller.AuthController;
 
+// 로그인 화면
 public class LoginPanel extends BasePanel {
     private final JTextField idField;
     private final JPasswordField passwordField;
 
+    // 입력 폼/버튼 구성
     public LoginPanel(AuthController authController) {
         super("Login");
 
@@ -29,16 +31,14 @@ public class LoginPanel extends BasePanel {
         formPanel.add(passwordField);
         centerPanel.add(formPanel);
         
-        contentsPanel.add(centerPanel, BorderLayout.CENTER);
+        contentsPanel.add(centerPanel, BorderLayout.CENTER); // 로그인 폼 중앙 배치
 
-        JButton loginButton = new JButton("Login");
+        JButton loginButton = new JButton("Login"); // 로그인 버튼
         loginButton.addActionListener(event -> {
-            // TODO: 빈 ID/비밀번호 검증 후 AuthController.login(...)을 호출한다.
             authController.login(idField.getText(), new String(passwordField.getPassword()));
         });
-        JButton registerButton = new JButton("Register");
+        JButton registerButton = new JButton("Register"); // 회원가입 버튼
         registerButton.addActionListener(event -> {
-            // TODO: 회원가입 입력값 검증 후 AuthController.register(...)를 호출한다.
             authController.register(idField.getText(), new String(passwordField.getPassword()));
         });
 

@@ -4,6 +4,20 @@ Java Swing, Socket, Jackson 기반의 영화 예매 프로그램입니다. 사�
 
 ## 실행 방법
 
+이 프로젝트는 Jackson 라이브러리 jar 파일을 `lib/` 폴더에 포함합니다. 따라서 Maven을 따로 실행하지 않아도 터미널에서 바로 컴파일하고 실행할 수 있습니다.
+
+처음 실행하는 경우 스크립트 실행 권한을 부여합니다.
+
+```sh
+chmod +x compile.sh run-server.sh run-gui.sh generate-data.sh
+```
+
+컴파일만 수행하려면 다음 명령을 사용합니다.
+
+```sh
+./compile.sh
+```
+
 서버를 먼저 실행합니다.
 
 ```sh
@@ -16,19 +30,20 @@ Java Swing, Socket, Jackson 기반의 영화 예매 프로그램입니다. 사�
 ./run-gui.sh
 ```
 
-컴파일만 수행하려면 다음 명령을 사용합니다.
+임의의 테스트 데이터를 다시 생성하려면 다음 명령을 실행합니다.
+
+```sh
+./generate-data.sh
+```
+
+Windows 환경에서 직접 실행하는 경우 classpath 구분자가 `:` 대신 `;`이므로 다음처럼 실행합니다.
 
 ```sh
 ./compile.sh
+java -cp "out;lib/*" server.randomDomainGenerator
 ```
 
-임의의 테스트 데이터를 다시 생성하려면 다음 클래스를 실행합니다.
-
-```sh
-java -cp out server.randomDomainGenerator
-```
-
-단, 직접 실행할 때는 Jackson jar가 classpath에 포함되어 있어야 합니다.
+제출 시에는 `src/`, `data/`, `lib/`, `compile.sh`, `run-server.sh`, `run-gui.sh`, `generate-data.sh`, `README.md`를 포함해야 합니다. `out/`과 `target/`은 컴파일 결과물이므로 제출하지 않아도 됩니다.
 
 ## 전체 구조
 
@@ -187,7 +202,7 @@ thread.start();
 - 사용자 10명
 - 영화 10개
 - 상영관 8개
-- 상영 일정 34개
+- 상영 일정 30개
 - 예약 30개
 
 예약 데이터 생성 시 `Reservation.seatCodes`와 `Showtime.reservedSeats`가 일치하도록 생성합니다.

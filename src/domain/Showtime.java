@@ -1,10 +1,11 @@
 package domain;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 
+// 상영 일정
 public class Showtime {
     private String id;
     private String movieId;
@@ -12,10 +13,12 @@ public class Showtime {
     private LocalDateTime startsAt;
     private Set<String> reservedSeats;
 
+    // JSON 역직렬화
     public Showtime() {
         this.reservedSeats = new LinkedHashSet<>();
     }
 
+    // 전체 값 생성
     public Showtime(String id, String movieId, String theaterId, LocalDateTime startsAt) {
         this.id = id;
         this.movieId = movieId;
@@ -24,20 +27,26 @@ public class Showtime {
         this.reservedSeats = new LinkedHashSet<>();
     }
 
+    // 좌석 예약 여부
     public boolean isReserved(String seatCode) {
         return reservedSeats.contains(seatCode.toUpperCase());
     }
 
-    public void reserveSeat(String seatCode) {
-        reservedSeats.add(seatCode.toUpperCase());
-    }
-
-    public void reserveSeats(Collection<String> seatCodes) {
+    // 복수 좌석 예약 처리
+    public void reserveSeats(List<String> seatCodes) {
         for (String seatCode : seatCodes) {
-            reserveSeat(seatCode);
+            reservedSeats.add(seatCode.toUpperCase());
         }
     }
 
+    // 복수 좌석 예약 해제 처리
+    public void releaseSeats(List<String> seatCodes) {
+        for (String seatCode : seatCodes) {
+            reservedSeats.remove(seatCode.toUpperCase());
+        }
+    }
+
+    // 필드 접근자
     public String getId() {
         return id;
     }

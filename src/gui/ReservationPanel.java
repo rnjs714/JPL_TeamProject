@@ -22,12 +22,14 @@ import domain.ReservationStatus;
 import domain.Showtime;
 import domain.Theater;
 
+// 예매 내역 화면
 public class ReservationPanel extends BasePanel implements Refreshable {
     private static final Dimension ITEM_SIZE = new Dimension(800, 150);
     private final ReservationController reservationController;
-    private final JPanel reservationListPanel;
+    private final JPanel reservationListPanel; // 예매 목록을 표시할 패널
     
 
+    // 예매 목록 영역 구성
     public ReservationPanel(ReservationController reservationController, NavigationController navigationController) {
         super("Reservations");
         this.reservationController = reservationController;
@@ -42,23 +44,24 @@ public class ReservationPanel extends BasePanel implements Refreshable {
     }
 
     @Override
+    // 예매 목록 갱신
     public final void refresh() {
-        reservationListPanel.removeAll();
+        reservationListPanel.removeAll(); // 기존 예매 목록 제거
 
         List<Reservation> reservations;
         try {
-            reservations = reservationController.loadReservations();
-        } catch (IllegalStateException e) {
+            reservations = reservationController.loadReservations(); // 예매 목록 로드
+        } catch (IllegalStateException e) { // 예매 목록 로드 실패 시 에러 메시지 표시
             reservationListPanel.add(new JLabel(e.getMessage()));
             revalidate();
             repaint();
             return;
         }
 
-        for (Reservation reservation : reservations) {
-            Showtime showtime = reservationController.getShowtime(reservation.getShowtimeId());
-            Movie movie = reservationController.getMovie(showtime.getMovieId());
-            Theater theater = reservationController.getTheater(showtime.getTheaterId());
+        for (Reservation reservation : reservations) { // 각 예매마다 정보 패널 생성
+            Showtime showtime = reservationController.getShowtime(reservation.getShowtimeId()); // 상영 일정 조회
+            Movie movie = reservationController.getMovie(showtime.getMovieId()); // 영화 조회
+            Theater theater = reservationController.getTheater(showtime.getTheaterId()); // 상영관 조회
 
             JPanel reservationPanel = new JPanel(new BorderLayout());
             reservationPanel.setPreferredSize(ITEM_SIZE);
@@ -77,9 +80,10 @@ public class ReservationPanel extends BasePanel implements Refreshable {
             JLabel seatLabel = new JLabel("Seats: " + reservation.getSeatCodes());
             JLabel statusLabel = new JLabel("Status: " + reservation.getStatus());
             JButton cancelButton = new JButton("Cancel");
-            if(reservation.getStatus() == ReservationStatus.CANCELED) {
+
+            if(reservation.getStatus() == ReservationStatus.CANCELED) { // 이미 취소된 예매는 취소 버튼 비활성화
                 cancelButton.setEnabled(false);
-            } else {
+            } else { // 취소 버튼 클릭 시 예매 취소 처리 후 목록 갱신
                 cancelButton.addActionListener(event -> {
                 reservationController.cancelReservation(reservation.getId());
                 refresh();

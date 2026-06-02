@@ -1,5 +1,6 @@
 package domain;
 
+// 상영관 정보
 public class Theater {
     private String id;
     private String name;
@@ -7,9 +8,11 @@ public class Theater {
     private int columns;
     private TheaterType type;
 
+    // JSON 역직렬화
     public Theater() {
     }
 
+    // 전체 값 생성
     public Theater(String id, String name, int rows, int columns, TheaterType type) {
         this.id = id;
         this.name = name;
@@ -18,6 +21,7 @@ public class Theater {
         this.type = type;
     }
 
+    // 좌석 범위 검증
     public boolean isValidSeat(String seatCode) {
         if (seatCode == null) {
             return false;
@@ -27,6 +31,7 @@ public class Theater {
         return 0 <= row && row < rows && 1 <= column && column <= columns;
     }
 
+    // 필드 접근자
     public String getId() {
         return id;
     }

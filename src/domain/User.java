@@ -1,17 +1,21 @@
 package domain;
 
+// 사용자 계정
 public class User {
     private String id;
     private String password;
 
+    // JSON 역직렬화
     public User() {
     }
 
+    // 전체 값 생성
     public User(String id, String password) {
         this.id = id;
         this.password = password;
     }
 
+    // 필드 접근자
     public String getId() {
         return id;
     }

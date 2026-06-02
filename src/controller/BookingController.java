@@ -13,12 +13,14 @@ import service.ApiService;
 import session.BookingSession;
 import session.UserSession;
 
+// 예매 흐름 제어
 public class BookingController {
     private final ApiService apiService;
     private final UserSession userSession;
     private final BookingSession bookingSession;
     private final NavigationController navigationController;
 
+    // 의존 객체 연결
     public BookingController(ApiService apiService, UserSession userSession, BookingSession bookingSession,
             NavigationController navigationController) {
         this.apiService = apiService;
@@ -27,30 +29,37 @@ public class BookingController {
         this.navigationController = navigationController;
     }
 
+    // 상영관 조회
     public Theater getTheater(String theaterId) {
         return apiService.getTheater(theaterId);
     }
 
+    // 선택 영화 조회
     public Movie getSelectedMovie() {
         return bookingSession.getSelectedMovie();
     }
 
+    // 선택 상영관 조회
     public Theater getSelectedTheater() {
         return bookingSession.getSelectedTheater();
     }
 
+    // 선택 상영 일정 조회
     public Showtime getSelectedShowtime() {
         return bookingSession.getSelectedShowtime();
     }
 
+    // 선택 좌석 조회
     public List<String> getSelectedSeats() {
         return bookingSession.getSelectedSeats();
     }
 
+    // 예약 좌석 조회
     public Set<String> getReservedSeats() {
         return bookingSession.getSelectedShowtime().getReservedSeats();
     }
 
+    // 영화 선택 초기화
     public void resetSelectedMovie() {
         bookingSession.setSelectedMovie(null);
         bookingSession.setSelectedShowtime(null);
@@ -58,16 +67,19 @@ public class BookingController {
         bookingSession.setSelectedSeats(new ArrayList<>());
     }
 
+    // 상영 일정 선택 초기화
     public void resetSelectedShowtime() {
         bookingSession.setSelectedShowtime(null);
         bookingSession.setSelectedTheater(null);
         bookingSession.setSelectedSeats(new ArrayList<>());
     }
 
+    // 좌석 선택 초기화
     public void resetSelectedSeats() {
         bookingSession.setSelectedSeats(new ArrayList<>());
     }
 
+    // 좌석 선택 토글
     public void toggleSeat(String seatCode) {
         List<String> selectedSeats = bookingSession.getSelectedSeats();
         if (selectedSeats.contains(seatCode)) {
@@ -77,49 +89,50 @@ public class BookingController {
         }
     }
 
+    // 영화 목록 로드
     public List<Movie> loadMovies() {
         try {
             List<Movie> movies = apiService.getMovieList();
-            if(movies.isEmpty()) {
+            if(movies.isEmpty()) { // 영화가 없는 경우 처리
                 throw new IllegalStateException("No movies found.");
             }
             return movies;
-        } catch (ApiException e) {
+        } catch (ApiException e) { // API 호출 실패 시 예외 처리
             throw new IllegalStateException(e.getMessage());
         }
     }
 
+    // 영화 선택 처리
     public void selectMovie(Movie movie) {
         bookingSession.setSelectedMovie(movie);
         navigationController.showShowtimes();
     }
 
+    // 상영 일정 목록 로드
     public List<Showtime> loadShowtimes() {
-        // TODO: 선택된 영화 id로 LIST_SHOWTIMES 요청을 보내고 List<Showtime>으로 변환해서 반환한다.
         try {
             List<Showtime> showtimes = apiService.getShowtimeList(bookingSession.getSelectedMovie().getId());
-            if(showtimes.isEmpty()) {
+            if(showtimes.isEmpty()) { // 상영 일정이 없는 경우 처리
                 throw new IllegalStateException("No showtimes found for the selected movie.");
             }
             return showtimes;
-        } catch (ApiException e) {
+        } catch (ApiException e) { // API 호출 실패 시 예외 처리
             throw new IllegalStateException(e.getMessage());
         } 
     }
 
+    // 상영 일정 선택 처리
     public void selectShowtime(Showtime showtime) {
-        // TODO: showtime.theaterId로 상영관 정보를 조회해서 bookingSession.setSelectedTheater(...)를 호출한다.
         bookingSession.setSelectedShowtime(showtime);
         bookingSession.setSelectedTheater(apiService.getTheater(showtime.getTheaterId()));
         navigationController.showSeats();
     }
 
+    // 선택 좌석 예매 요청
     public void reserveSelectedSeats() {
-        // TODO: 로그인 사용자 id, 선택된 showtime id, 선택 좌석 목록으로 RESERVE 요청을 보낸다.
-        // TODO: 성공하면 BookingSession 선택 값을 초기화하고 예매 내역 화면으로 이동한다.
         try {
             List<String> selectedSeats = bookingSession.getSelectedSeats();
-            if(selectedSeats == null || selectedSeats.isEmpty()) {
+            if(selectedSeats == null || selectedSeats.isEmpty()) { // 좌석이 선택되지 않은 경우 처리
                 navigationController.showMessage("Please select seats to reserve.");
                 return;
             }
@@ -129,7 +142,7 @@ public class BookingController {
             navigationController.showMessage("Reservation successful!\nReservation ID: " + reservation.getId());
             navigationController.showReservations();
             resetSelectedMovie();
-        } catch (ApiException e) {
+        } catch (ApiException e) { // API 호출 실패 시 예외 처리
             navigationController.showMessage(e.getMessage());
         }
     }
