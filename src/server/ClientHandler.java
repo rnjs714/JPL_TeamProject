@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import domain.GroupReservation;
 import domain.Movie;
 import domain.Reservation;
 import domain.Showtime;
@@ -21,6 +22,12 @@ import protocol.Request;
 import protocol.Response;
 import repository.DataRepository;
 
+/**
+ * 클라이언트 한 명의 요청을 처리하는 서버 측 핸들러이다.
+ *
+ * GUI는 문자열 command와 body를 JSON으로 보내고,
+ * 이 클래스는 command에 맞는 repository 메서드를 호출한 뒤 Response로 결과를 돌려준다.
+ */
 public class ClientHandler implements Runnable {
     private final Socket socket;
     private final DataRepository repository;
@@ -38,6 +45,7 @@ public class ClientHandler implements Runnable {
                 PrintWriter writer = new PrintWriter(socket.getOutputStream(), true)) {
             String requestJson;
             while ((requestJson = reader.readLine()) != null) {
+                // 한 줄 단위 JSON 요청을 Request 객체로 바꾼 뒤 실제 처리 메서드로 넘긴다.
                 Request request = objectMapper.readValue(requestJson, Request.class);
                 Response response = handle(request);
                 writer.println(objectMapper.writeValueAsString(response));
@@ -48,7 +56,8 @@ public class ClientHandler implements Runnable {
     }
 
     private Response handle(Request request) {
-        // TODO: command 값에 따라 register, login, reserve 등으로 분기한다.
+        // command 이름은 클라이언트와 서버가 약속한 API 이름이다.
+        // 새 기능인 좌석 가격 조회와 그룹 예매도 여기에서 각각의 처리 메서드로 연결된다.
         return switch (request.getCommand()) {
             case "REGISTER" -> register(request.getBody());
             case "LOGIN" -> login(request.getBody());
@@ -59,7 +68,9 @@ public class ClientHandler implements Runnable {
             case "GET_SHOWTIME" -> getShowtime(request.getBody());
             case "CALCULATE_PRICE" -> calculatePrice(request.getBody());
             case "GET_SEAT_PRICE" -> getSeatPrice(request.getBody());
-            case "FIND_GROUP_SEATS" -> findGroupSeats(request.getBody());
+            case "CREATE_GROUP_RESERVATION" -> createGroupReservation(request.getBody());
+            case "PAY_GROUP_RESERVATION" -> payGroupReservation(request.getBody());
+            case "LIST_GROUP_RESERVATIONS" -> listGroupReservations(request.getBody());
             case "RESERVE" -> reserve(request.getBody());
             case "CANCEL_RESERVATION" -> cancelReservation(request.getBody());
             case "LIST_RESERVATIONS" -> listReservations(request.getBody());
@@ -68,7 +79,6 @@ public class ClientHandler implements Runnable {
     }
 
     private Response register(Map<String, Object> body) {
-        // TODO: 회원가입 요청을 처리한다.
         User newUser = new User(
                 (String) body.get("id"),
                 (String) body.get("password")
@@ -82,7 +92,6 @@ public class ClientHandler implements Runnable {
     }
 
     private Response login(Map<String, Object> body) {
-        // TODO: 로그인 요청을 처리한다.
         try {
             User user = repository.login((String) body.get("id"), (String) body.get("password"));
             if (user != null) {
@@ -96,7 +105,6 @@ public class ClientHandler implements Runnable {
     }
 
     private Response listMovies() {
-        // TODO: 영화 목록 요청을 처리한다.
         try {
             List<Movie> movies = repository.findMovies();
             if(!movies.isEmpty()) {
@@ -110,7 +118,6 @@ public class ClientHandler implements Runnable {
     }
 
     private Response listShowtimes(Map<String, Object> body) {
-        // TODO: 영화 ID로 상영 일정 목록 요청을 처리한다.
         try {
             List<Showtime> showtimes = repository.findShowtimesByMovie((String) body.get("movieId"));
             if(!showtimes.isEmpty()) {
@@ -124,7 +131,6 @@ public class ClientHandler implements Runnable {
     }
 
     private Response getTheater(Map<String, Object> body) {
-        // TODO: 상영관 정보 요청을 처리한다.
         try {
             Theater theater = repository.findTheater((String) body.get("theaterId"));
             if (theater != null) {
@@ -138,7 +144,6 @@ public class ClientHandler implements Runnable {
     }
 
     private Response getMovie(Map<String, Object> body) {
-        // TODO: 영화 정보 요청을 처리한다.
         try {
             Movie movie = repository.findMovie((String) body.get("movieId"));
             if (movie != null) {
@@ -152,7 +157,6 @@ public class ClientHandler implements Runnable {
     }
 
     private Response getShowtime(Map<String, Object> body) {
-        // TODO: 상영 시간 정보 요청을 처리한다.
         try {
             Showtime showtime = repository.findShowtime((String) body.get("showtimeId"));
             if (showtime != null) {
@@ -166,7 +170,6 @@ public class ClientHandler implements Runnable {
     }
 
     private Response reserve(Map<String, Object> body) {
-        // TODO: 좌석 예매 요청을 처리한다.
         try {
             String userId = (String) body.get("userId");
             String showtimeId = (String) body.get("showtimeId");
@@ -176,13 +179,13 @@ public class ClientHandler implements Runnable {
         } catch (IllegalArgumentException e) {
             return Response.fail(e.getMessage());
         }
-        
     }
 
     private Response calculatePrice(Map<String, Object> body) {
         try {
             String showtimeId = (String) body.get("showtimeId");
             List<String> seatCodes = objectMapper.convertValue(body.get("seatCodes"), new TypeReference<List<String>>() {});
+            // 선택 좌석 전체 가격을 서버에서 계산해 클라이언트 화면에 보여준다.
             int totalPrice = repository.calculatePrice(showtimeId, seatCodes);
             return Response.ok("Price calculated successfully", totalPrice);
         } catch (IllegalArgumentException e) {
@@ -194,6 +197,7 @@ public class ClientHandler implements Runnable {
         try {
             String showtimeId = (String) body.get("showtimeId");
             String seatCode = (String) body.get("seatCode");
+            // 좌석 하나의 시야 점수, 가격, 상태를 내려주어 좌석 버튼 UI를 구성하게 한다.
             Map<String, Object> priceInfo = repository.calculateSeatPriceInfo(showtimeId, seatCode);
             return Response.ok("Seat price calculated successfully", priceInfo);
         } catch (IllegalArgumentException e) {
@@ -201,33 +205,44 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private Response findGroupSeats(Map<String, Object> body) {
+    private Response createGroupReservation(Map<String, Object> body) {
         try {
+            String leaderId = (String) body.get("leaderId");
             String showtimeId = (String) body.get("showtimeId");
-            int peopleCount = readInt(body.get("peopleCount"));
-            List<String> seatCodes = repository.findRecommendedGroupSeats(showtimeId, peopleCount);
-            return Response.ok("Group seats found successfully", seatCodes);
+            List<String> friendIds = objectMapper.convertValue(body.get("friendIds"), new TypeReference<List<String>>() {});
+            List<String> seatCodes = objectMapper.convertValue(body.get("seatCodes"), new TypeReference<List<String>>() {});
+            // 대표자가 선택한 친구와 좌석을 기준으로 PENDING 그룹 예매를 만들고 좌석을 임시 홀딩한다.
+            GroupReservation group = repository.createGroupReservation(leaderId, friendIds, showtimeId, seatCodes);
+            return Response.ok("Group reservation is temporarily held. Group members must pay.", group);
         } catch (IllegalArgumentException e) {
             return Response.fail(e.getMessage());
         }
     }
 
-    private int readInt(Object value) {
-        if(value == null) {
-            throw new IllegalArgumentException("인원 수를 입력해주세요.");
-        }
-        if(value instanceof Number) {
-            return ((Number) value).intValue();
-        }
+    private Response payGroupReservation(Map<String, Object> body) {
         try {
-            return Integer.parseInt(String.valueOf(value));
-        } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("인원 수는 숫자로 입력해주세요.");
+            String groupId = (String) body.get("groupId");
+            String userId = (String) body.get("userId");
+            // 그룹원 한 명의 결제를 처리한다. 전원 결제가 끝나면 repository에서 자동 확정된다.
+            GroupReservation group = repository.payForGroupReservation(groupId, userId);
+            return Response.ok("Group payment processed.", group);
+        } catch (IllegalArgumentException e) {
+            return Response.fail(e.getMessage());
+        }
+    }
+
+    private Response listGroupReservations(Map<String, Object> body) {
+        try {
+            String userId = (String) body.get("userId");
+            // 로그인 사용자가 포함된 그룹 예매만 반환해 각자 결제 상태를 확인할 수 있게 한다.
+            List<GroupReservation> groups = repository.findGroupReservationsByUser(userId);
+            return Response.ok("Group reservations retrieved successfully", groups);
+        } catch (IllegalArgumentException e) {
+            return Response.fail(e.getMessage());
         }
     }
 
     private Response cancelReservation(Map<String, Object> body) {
-        // TODO: 예약 취소 요청을 처리한다.
         try {
             String reservationId = (String) body.get("reservationId");
             String requesterId = (String) body.get("requesterId");
@@ -243,7 +258,6 @@ public class ClientHandler implements Runnable {
     }
 
     private Response listReservations(Map<String, Object> body) {
-        // TODO: 사용자 ID로 예매 내역 요청을 처리한다.
         try {
             List<Reservation> reservations = repository.findReservationsByUser((String) body.get("userId"));
             if(!reservations.isEmpty()) {
