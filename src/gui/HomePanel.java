@@ -12,13 +12,16 @@ import controller.NavigationController;
 
 // 홈 화면
 public class HomePanel extends BasePanel implements Refreshable {
+    private static final long serialVersionUID = 1L;
+
     private static final Dimension BANNER_SIZE = new Dimension(800,200);
     private static final Dimension ITEM_SIZE = new Dimension(800, 50);
 
-    private final AuthController authController;
+    private final transient AuthController authController;
     private final JLabel welcomeLabel;
 
     // 홈 메뉴 구성
+    @SuppressWarnings("this-escape")
     public HomePanel (AuthController authController, NavigationController navigationController) {
         super("Home");
         this.authController = authController;
@@ -45,7 +48,6 @@ public class HomePanel extends BasePanel implements Refreshable {
         contentsPanel.add(welcomeLabel);
         contentsPanel.add(movieListButton);
         contentsPanel.add(reservationButton);
-
         JButton logoutButton = new JButton("Logout"); // 로그아웃 버튼
         logoutButton.addActionListener(event -> authController.logout());
         add(logoutButton, BorderLayout.SOUTH);

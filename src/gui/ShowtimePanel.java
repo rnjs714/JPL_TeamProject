@@ -20,12 +20,15 @@ import domain.Showtime;
 
 // 상영 일정 화면
 public class ShowtimePanel extends BasePanel implements Refreshable {
+    private static final long serialVersionUID = 1L;
+
     private static final Dimension ITEM_SIZE = new Dimension(800, 50);
-    private final BookingController bookingController;
+    private final transient BookingController bookingController;
     private final JPanel showtimeListPanel; // 상영 일정 목록을 표시할 패널
     private final JLabel movieTitleLabel; // 선택된 영화 제목을 표시할 레이블
 
     // 상영 일정 목록 영역 구성
+    @SuppressWarnings("this-escape")
     public ShowtimePanel(BookingController bookingController, NavigationController navigationController) {
         super("Showtimes");
         this.bookingController = bookingController;

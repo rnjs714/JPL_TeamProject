@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import domain.DynamicPriceCalculator;
 import domain.Movie;
 import domain.Reservation;
 import domain.ReservationStatus;
@@ -31,6 +32,7 @@ public class randomDomainGenerator {
     private static final int RESERVATION_COUNT = 30;
     private static final int MAX_SEATS_PER_RESERVATION = 5;
     private static final Random RANDOM = new Random();
+    private static final DynamicPriceCalculator PRICE_CALCULATOR = new DynamicPriceCalculator();
 
     // 생성기 실행점
     public static void main(String[] args) {
@@ -158,6 +160,7 @@ public class randomDomainGenerator {
                     1 + RANDOM.nextInt(MAX_SEATS_PER_RESERVATION)
             );
             showtime.reserveSeats(seatCodes);
+            int totalPrice = PRICE_CALCULATOR.calculateTotalPrice(theater, showtime, seatCodes);
 
             reservations.add(new Reservation(
                     "R" + (1780300000000L + i + 1),
@@ -165,7 +168,8 @@ public class randomDomainGenerator {
                     showtime.getId(),
                     seatCodes,
                     ReservationStatus.CONFIRMED,
-                    LocalDateTime.of(2026, 5, 31, 9, 0).plusMinutes(i * 5L)
+                    LocalDateTime.of(2026, 5, 31, 9, 0).plusMinutes(i * 5L),
+                    totalPrice
             ));
         }
         return reservations;
@@ -200,6 +204,16 @@ public class randomDomainGenerator {
             }
         }
         throw new IllegalArgumentException("Unknown theater ID: " + theaterId);
+    }
+
+    // 사용자 검색
+    private static User findUser(List<User> users, String userId) {
+        for (User user : users) {
+            if (userId.equals(user.getId())) {
+                return user;
+            }
+        }
+        throw new IllegalArgumentException("Unknown user ID: " + userId);
     }
 
     // JSON 파일 저장

@@ -14,10 +14,13 @@ import controller.AuthController;
 
 // 로그인 화면
 public class LoginPanel extends BasePanel {
+    private static final long serialVersionUID = 1L;
+
     private final JTextField idField;
     private final JPasswordField passwordField;
 
     // 입력 폼/버튼 구성
+    @SuppressWarnings("this-escape")
     public LoginPanel(AuthController authController) {
         super("Login");
 

@@ -1,5 +1,8 @@
 package domain;
 
+import java.util.ArrayList;
+import java.util.List;
+
 // 상영관 정보
 public class Theater {
     private String id;
@@ -29,6 +32,16 @@ public class Theater {
         int row = Character.toUpperCase(seatCode.charAt(0)) - 'A';
         int column = Integer.parseInt(seatCode.substring(1));
         return 0 <= row && row < rows && 1 <= column && column <= columns;
+    }
+
+    public List<String> getAllSeatCodes() {
+        List<String> seatCodes = new ArrayList<>();
+        for (int row = 0; row < rows; row++) {
+            for (int column = 1; column <= columns; column++) {
+                seatCodes.add("" + (char) ('A' + row) + column);
+            }
+        }
+        return seatCodes;
     }
 
     // 필드 접근자

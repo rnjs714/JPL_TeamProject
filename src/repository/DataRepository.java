@@ -4,15 +4,19 @@ import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
+import domain.DynamicPriceCalculator;
 import domain.Movie;
 import domain.Reservation;
 import domain.ReservationStatus;
+import domain.SeatInfo;
 import domain.Showtime;
 import domain.Theater;
 import domain.User;
@@ -21,6 +25,7 @@ import domain.User;
 public class DataRepository {
     private final File file;
     private final ObjectMapper objectMapper;
+    private final DynamicPriceCalculator priceCalculator;
     private MovieBookingData data;
 
     // 저장소 초기화
@@ -30,6 +35,7 @@ public class DataRepository {
                 .registerModule(new JavaTimeModule())
                 .enable(SerializationFeature.INDENT_OUTPUT)
                 .disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        this.priceCalculator = new DynamicPriceCalculator();
         initialize();
     }
 
@@ -176,6 +182,7 @@ public class DataRepository {
             throw new IllegalArgumentException("Wrong Showtime ID.");
         }
         validateReservationInput(showtimeId, seatCodes); // 예매 입력 검증 (좌석 코드 유효성 및 예약 가능 여부)
+        int totalPrice = priceCalculator.calculateTotalPrice(findTheater(showtime.getTheaterId()), showtime, seatCodes);
         showtime.reserveSeats(seatCodes); // 좌석 예약 처리 (예약 불가능한 좌석이 있는 경우 예외 발생)
         Reservation reservation = new Reservation(
                 "R" + System.currentTimeMillis(),
@@ -183,7 +190,8 @@ public class DataRepository {
                 showtime.getId(),
                 seatCodes,
                 ReservationStatus.CONFIRMED,
-                LocalDateTime.now()
+                LocalDateTime.now(),
+                totalPrice
         ); // 예매 객체 생성
         List<Reservation> reservations = data.getReservations();
         reservations.add(reservation); // 예매 저장
@@ -211,9 +219,14 @@ public class DataRepository {
 
     // 예매 입력 검증
     private void validateReservationInput(String showtimeId, List<String> seatCodes) {
+        Set<String> selectedSeats = new LinkedHashSet<>();
+        Showtime showtime = findShowtime(showtimeId);   
+        Theater theater = findTheater(showtime.getTheaterId());
         for (String seat : seatCodes) {
-            Showtime showtime = findShowtime(showtimeId);   
-            validateSeat(findTheater(showtime.getTheaterId()), seat);
+            validateSeat(theater, seat);
+            if (!selectedSeats.add(seat)) {
+                throw new IllegalArgumentException("Duplicated seat: " + seat);
+            }
             if (showtime.isReserved(seat)) { // 좌석이 이미 예약된 경우 예외 발생
                 throw new IllegalArgumentException("Seat already reserved: " + seat);
             }
@@ -225,6 +238,24 @@ public class DataRepository {
         if (!theater.isValidSeat(seatCode)) { // 좌석 코드가 상영관의 좌석 배치에 존재하지 않는 경우 예외 발생
             throw new IllegalArgumentException("Invalid seat code: " + seatCode);
         }
+    }
+
+    // ===== 가격 추가 기능 =====
+
+    // 좌석별 가격/시야/상태 조회
+    public synchronized List<SeatInfo> calculateSeatInfo(String showtimeId) {
+        Showtime showtime = findShowtime(showtimeId);
+        if (showtime == null) {
+            throw new IllegalArgumentException("Wrong Showtime ID.");
+        }
+        Theater theater = findTheater(showtime.getTheaterId());
+        List<SeatInfo> seatInfoList = new ArrayList<>();
+        for(String seatCode : theater.getAllSeatCodes()) {
+            int viewScore = priceCalculator.calculateViewScore(theater, seatCode);
+            int price = priceCalculator.calculateSeatPrice(theater, seatCode, showtime.getReservedSeats().size());
+            seatInfoList.add(new SeatInfo(seatCode, viewScore, price, showtime.isReserved(seatCode)));
+        }
+        return seatInfoList;
     }
 
 }

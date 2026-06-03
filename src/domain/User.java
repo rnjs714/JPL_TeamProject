@@ -1,6 +1,4 @@
 package domain;
-
-// 사용자 계정
 public class User {
     private String id;
     private String password;

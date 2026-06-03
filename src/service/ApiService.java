@@ -8,6 +8,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import client.SocketClient;
 import domain.Movie;
 import domain.Reservation;
+import domain.SeatInfo;
 import domain.Showtime;
 import domain.Theater;
 import domain.User;
@@ -26,6 +27,11 @@ public class ApiService {
     public User login(String id, String password) {
         return requestData("LOGIN", Map.of("id", id, "password", password), new TypeReference<User>() {},
                 "[Login failed]");
+    }
+
+    // 사용자 단건 조회
+    public User getUser(String id) {
+        return requestData("GET_USER", Map.of("id", id), new TypeReference<User>() {}, "[Failed to load user]");
     }
 
     // 회원가입 요청
@@ -82,6 +88,26 @@ public class ApiService {
         return requestData("CANCEL_RESERVATION", Map.of(
                 "reservationId", reservationId,
                 "requesterId", userId), new TypeReference<Reservation>() {}, "[Reservation cancellation request failed]");
+    }
+
+    public void sendFriendRequest(String userId, String friendId) {
+        sendRequest("SEND_FRIEND_REQUEST", Map.of(
+                "userId", userId,
+                "friendId", friendId), "[Failed to send friend request]");
+    }
+
+    public void addFriend(String userId, String friendId) {
+        sendRequest("ADD_FRIEND", Map.of(
+                "userId", userId,
+                "friendId", friendId), "[Failed to add friend]");
+    }
+
+    // ===== 가격 추가 기능 =====
+
+    // 좌석별 가격/상태 요청
+    public List<SeatInfo> getSeatInfoList(String showtimeId) {
+        return requestData("GET_SEAT_INFO_LIST", Map.of(
+                "showtimeId", showtimeId), new TypeReference<List<SeatInfo>>() {}, "[Seat price request failed]");
     }
 
     // 데이터 응답 요청

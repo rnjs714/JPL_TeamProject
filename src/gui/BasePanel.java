@@ -11,10 +11,13 @@ import javax.swing.border.EmptyBorder;
 
 // 공통 패널 레이아웃
 public abstract class BasePanel extends JPanel {
+    private static final long serialVersionUID = 1L;
+
     protected final JPanel titlePanel;
     protected final JPanel contentsPanel;
 
     // 타이틀/콘텐츠 영역 구성
+    @SuppressWarnings("this-escape")
     protected BasePanel(String title) {
         setLayout(new BorderLayout());
 

@@ -87,6 +87,9 @@ movie-booking.json
 - `Showtime`: 영화, 상영관, 시작 시간, 예약된 좌석 정보를 가집니다.
 - `Reservation`: 예매 정보입니다.
 - `ReservationStatus`: 예매 상태입니다. `CONFIRMED`, `CANCELED`를 가집니다.
+- `SeatInfo`: 좌석 코드, 시야 점수, 가격, 예약 여부를 담는 좌석 표시용 정보입니다.
+- `ViewScoreCalculator`: 좌석 위치를 기준으로 시야 점수를 계산합니다.
+- `DynamicPriceCalculator`: 상영관 타입, 시야 점수, 예약률을 기준으로 좌석 가격을 계산합니다.
 
 ### `repository`
 
@@ -106,6 +109,8 @@ JSON 파일 기반 데이터 저장소입니다.
 - 예약 취소
 - 사용자별 예약 내역 조회
 - 좌석 유효성 및 중복 예약 검증
+- 좌석별 시야 점수, 가격, 예약 상태 계산
+- 예약 총 가격 계산
 
 ### `server`
 
@@ -139,7 +144,7 @@ JSON 파일 기반 데이터 저장소입니다.
 GUI 이벤트를 받아 세션 값을 변경하고 화면 흐름을 제어합니다.
 
 - `AuthController`: 로그인, 회원가입, 로그아웃을 처리하고 `UserSession`을 관리합니다.
-- `BookingController`: 영화 선택, 상영 시간 선택, 좌석 선택, 예매 생성을 처리하고 `BookingSession`을 관리합니다.
+- `BookingController`: 영화 선택, 상영 시간 선택, 좌석 선택, 자동 좌석 선택, 예매 생성, 가격 조회를 처리하고 `BookingSession`을 관리합니다.
 - `ReservationController`: 예매 내역 조회와 예약 취소를 처리합니다.
 - `NavigationController`: 화면 이동, 메시지 창, 확인 창을 담당합니다.
 
@@ -148,7 +153,7 @@ GUI 이벤트를 받아 세션 값을 변경하고 화면 흐름을 제어합니
 클라이언트 실행 중 필요한 임시 상태를 저장합니다.
 
 - `UserSession`: 현재 로그인한 사용자 정보를 저장합니다.
-- `BookingSession`: 선택한 영화, 상영 시간, 상영관, 좌석 정보를 저장합니다.
+- `BookingSession`: 선택한 영화, 상영 시간, 상영관, 선택 좌석, 좌석별 정보를 저장합니다.
 
 세션 클래스는 getter/setter 중심의 상태 저장 객체이고, 실제 상태 변경 흐름은 컨트롤러에서 관리합니다.
 
@@ -164,7 +169,7 @@ Swing 화면을 담당합니다.
 - `HomePanel`: 로그인 후 홈 화면입니다.
 - `MovieListPanel`: 영화 목록을 표시하고 영화를 선택합니다.
 - `ShowtimePanel`: 선택한 영화의 상영 시간 목록을 표시합니다.
-- `SeatSelectionPanel`: 좌석 선택 및 예매 요청 화면입니다.
+- `SeatSelectionPanel`: 좌석 선택, 좌석별 시야 점수와 가격 확인, 인원수 기반 자동 좌석 선택, 예매 요청 화면입니다.
 - `ReservationPanel`: 로그인 사용자의 예매 내역을 표시하고 예약 취소를 요청합니다.
 
 ## 데이터 저장 방식
@@ -190,6 +195,8 @@ thread.start();
 - 영화 목록 조회
 - 영화별 상영 시간 조회
 - 상영관별 좌석 표시
+- 좌석별 시야 점수 및 가격 표시
+- 인원수 기반 자동 좌석 선택
 - 좌석 선택 및 예매
 - 사용자별 예매 내역 조회
 - 예약 취소

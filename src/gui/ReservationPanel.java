@@ -24,12 +24,15 @@ import domain.Theater;
 
 // 예매 내역 화면
 public class ReservationPanel extends BasePanel implements Refreshable {
+    private static final long serialVersionUID = 1L;
+
     private static final Dimension ITEM_SIZE = new Dimension(800, 150);
-    private final ReservationController reservationController;
-    private final JPanel reservationListPanel; // 예매 목록을 표시할 패널
+    private final transient ReservationController reservationController;
+    private final JPanel reservationListPanel; // 개인 예매 목록을 표시할 패널
     
 
     // 예매 목록 영역 구성
+    @SuppressWarnings("this-escape")
     public ReservationPanel(ReservationController reservationController, NavigationController navigationController) {
         super("Reservations");
         this.reservationController = reservationController;
@@ -48,13 +51,19 @@ public class ReservationPanel extends BasePanel implements Refreshable {
     public final void refresh() {
         reservationListPanel.removeAll(); // 기존 예매 목록 제거
 
+        addPersonalReservations();
+
+        revalidate();
+        repaint();
+    }
+
+    // 개인 예매 목록 추가
+    private void addPersonalReservations() {
         List<Reservation> reservations;
         try {
             reservations = reservationController.loadReservations(); // 예매 목록 로드
         } catch (IllegalStateException e) { // 예매 목록 로드 실패 시 에러 메시지 표시
-            reservationListPanel.add(new JLabel(e.getMessage()));
-            revalidate();
-            repaint();
+            addMessage(reservationListPanel, e.getMessage());
             return;
         }
 
@@ -98,11 +107,24 @@ public class ReservationPanel extends BasePanel implements Refreshable {
             reservationPanel.add(infoPanel, BorderLayout.CENTER);
             reservationPanel.add(cancelButton, BorderLayout.EAST);
 
-            JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-            rowPanel.add(reservationPanel);
-            reservationListPanel.add(rowPanel);
+            addItem(reservationListPanel, reservationPanel);
         }
-        revalidate();
-        repaint();
     }
+
+    // 안내 메시지 추가
+    private void addMessage(JPanel listPanel, String message) {
+        JLabel messageLabel = new JLabel(message);
+        messageLabel.setBorder(new EmptyBorder(12, 12, 12, 12));
+        messageLabel.setMaximumSize(messageLabel.getPreferredSize());
+        listPanel.add(messageLabel);
+    }
+
+    // 목록 아이템 추가
+    private void addItem(JPanel listPanel, JPanel itemPanel) {
+        JPanel rowPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        rowPanel.add(itemPanel);
+        rowPanel.setMaximumSize(new Dimension(Integer.MAX_VALUE, rowPanel.getPreferredSize().height));
+        listPanel.add(rowPanel);
+    }
+
 }

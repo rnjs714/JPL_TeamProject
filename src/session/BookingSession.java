@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import domain.Movie;
+import domain.SeatInfo;
 import domain.Showtime;
 import domain.Theater;
 
@@ -13,10 +14,12 @@ public class BookingSession {
     private Showtime selectedShowtime;
     private Theater selectedTheater;
     private List<String> selectedSeats;
+    private List<SeatInfo> seatInfoList;
 
     // 기본 선택값 초기화
     public BookingSession() {
         this.selectedSeats = new ArrayList<>();
+        this.seatInfoList = new ArrayList<>();
     }
 
     // 선택 영화 접근자
@@ -53,5 +56,14 @@ public class BookingSession {
 
     public void setSelectedSeats(List<String> selectedSeats) {
         this.selectedSeats = selectedSeats;
+    }
+
+    // 좌석 정보 리스트 접근자
+    public List<SeatInfo> getSeatInfoList() {
+        return seatInfoList;
+    }
+
+    public void setSeatInfoList(List<SeatInfo> seatInfoList) {
+        this.seatInfoList = seatInfoList;
     }
 }

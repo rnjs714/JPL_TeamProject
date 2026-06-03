@@ -1,13 +1,13 @@
 package repository;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import domain.Movie;
 import domain.Reservation;
 import domain.Showtime;
 import domain.Theater;
 import domain.User;
-
-import java.util.ArrayList;
-import java.util.List;
 
 // JSON 루트 데이터
 public class MovieBookingData {

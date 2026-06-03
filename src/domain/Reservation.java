@@ -12,6 +12,7 @@ public class Reservation {
     private List<String> seatCodes;
     private ReservationStatus status;
     private LocalDateTime createdAt;
+    private int totalPrice;
 
     // JSON 역직렬화
     public Reservation() {
@@ -22,12 +23,19 @@ public class Reservation {
 
     // 전체 값 생성
     public Reservation(String id, String userId, String showtimeId, List<String> seatCodes, ReservationStatus status, LocalDateTime createdAt) {
+        this(id, userId, showtimeId, seatCodes, status, createdAt, 0);
+    }
+
+    // 가격 포함 값 생성
+    public Reservation(String id, String userId, String showtimeId, List<String> seatCodes,
+            ReservationStatus status, LocalDateTime createdAt, int totalPrice) {
         this.id = id;
         this.userId = userId;
         this.showtimeId = showtimeId;
         this.seatCodes = seatCodes;
         this.status = status;
         this.createdAt = createdAt;
+        this.totalPrice = totalPrice;
     }
 
     // 예매 확정
@@ -87,5 +95,14 @@ public class Reservation {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    // 가격 접근자
+    public int getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(int totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

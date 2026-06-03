@@ -17,12 +17,15 @@ import domain.Movie;
 
 // 영화 목록 화면
 public class MovieListPanel extends BasePanel implements Refreshable {
+    private static final long serialVersionUID = 1L;
+
     private static final Dimension ITEM_SIZE = new Dimension(800, 50);
 
-    private final BookingController bookingController;
+    private final transient BookingController bookingController;
     private final JPanel movieListPanel; // 영화 목록을 표시할 패널
 
     // 영화 목록 영역 구성
+    @SuppressWarnings("this-escape")
     public MovieListPanel(BookingController bookingController, NavigationController navigationController) {
         super("Movies");
         this.bookingController = bookingController;

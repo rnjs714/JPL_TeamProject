@@ -26,11 +26,12 @@ public class MainFrame extends JFrame {
     public static final String SEAT_SCREEN = "seat";
     public static final String RESERVATION_SCREEN = "reservation";
 
-    private final Map<String, JPanel> screenMap = new HashMap<>();
+    private final transient Map<String, JPanel> screenMap = new HashMap<>();
     private final JPanel rootPanel;
     private final CardLayout cardLayout;
 
     // 프레임/컨트롤러/화면 초기화
+    @SuppressWarnings("this-escape")
     public MainFrame(String host, int port) {
         cardLayout = new CardLayout();
         rootPanel = new JPanel(cardLayout);
@@ -51,7 +52,7 @@ public class MainFrame extends JFrame {
         AuthController authController = new AuthController(apiService, userSession, navigationController);
         BookingController bookingController = new BookingController(apiService, userSession, bookingSession, navigationController);
         ReservationController reservationController = new ReservationController(apiService, userSession, navigationController);
-        
+
         // 화면 등록
         addScreen(LOGIN_SCREEN, new LoginPanel(authController));
         addScreen(HOME_SCREEN, new HomePanel(authController, navigationController));
