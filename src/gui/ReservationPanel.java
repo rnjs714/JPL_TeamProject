@@ -78,7 +78,7 @@ public class ReservationPanel extends BasePanel implements Refreshable {
             reservationPanel.setMinimumSize(ITEM_SIZE);
             reservationPanel.setBorder(new EmptyBorder(12, 12, 12, 12));
             reservationPanel.setBackground(new Color(220, 220, 220));
-            JPanel infoPanel = new JPanel(new GridLayout(3, 2, 0, 0));
+            JPanel infoPanel = new JPanel(new GridLayout(4, 2, 0, 0));
             infoPanel.setBorder(new EmptyBorder(0, 20, 0, 0));
             infoPanel.setBackground(new Color(220, 220, 220));
 
@@ -88,6 +88,7 @@ public class ReservationPanel extends BasePanel implements Refreshable {
             JLabel showtimeLabel = new JLabel("Showtime: " + showtime.getStartsAt());
             JLabel seatLabel = new JLabel("Seats: " + reservation.getSeatCodes());
             JLabel statusLabel = new JLabel("Status: " + reservation.getStatus());
+            JLabel priceLabel = new JLabel("Price: " + formatPrice(reservation.getTotalPrice()));
             JButton cancelButton = new JButton("Cancel");
 
             if(reservation.getStatus() == ReservationStatus.CANCELED) { // 이미 취소된 예매는 취소 버튼 비활성화
@@ -104,6 +105,7 @@ public class ReservationPanel extends BasePanel implements Refreshable {
             infoPanel.add(showtimeLabel);
             infoPanel.add(seatLabel);
             infoPanel.add(statusLabel);
+            infoPanel.add(priceLabel);
             reservationPanel.add(infoPanel, BorderLayout.CENTER);
             reservationPanel.add(cancelButton, BorderLayout.EAST);
 

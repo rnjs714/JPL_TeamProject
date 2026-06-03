@@ -38,6 +38,9 @@ public class SeatSelectionPanel extends BasePanel implements Refreshable {
         this.navigationController = navigationController;
         this.seatGridPanel = new JPanel();
         this.theaterNameLabel = new JLabel("", SwingConstants.CENTER);
+        this.priceLabel = new JLabel("Selected Price: -", SwingConstants.CENTER);
+        this.groupCountField = new JTextField("2", 4);
+        this.seatButtons = new HashMap<>();
         theaterNameLabel.setBorder(new EmptyBorder(10, 0, 10, 0));
         theaterNameLabel.setOpaque(true);
         theaterNameLabel.setBackground(new Color(200, 200, 200));
@@ -144,6 +147,7 @@ public class SeatSelectionPanel extends BasePanel implements Refreshable {
                         updateSelectedPrice(); // 선택 좌석 목록 기준으로 총 가격 다시 계산
                     });
                 }
+                seatButtons.put(seatId, seatButton);
                 seatGridPanel.add(seatButton);
             }
             
@@ -185,6 +189,92 @@ public class SeatSelectionPanel extends BasePanel implements Refreshable {
     }
 
     // 가격 형식
+    private String formatPrice(int totalPrice) {
+        if (totalPrice <= 0) {
+            return "-";
+        }
+        return String.format("%,d KRW", totalPrice);
+    }
+
+    private void updateSelectedPrice() {
+        try {
+            int totalPrice = bookingController.calculateSelectedSeatPrice();
+            priceLabel.setText("Selected Price: " + formatPrice(totalPrice));
+        } catch (IllegalStateException e) {
+            priceLabel.setText("Selected Price: -");
+        }
+    }
+
+    private void setSeatPriceText(JToggleButton seatButton, String seatId) {
+        try {
+            Map<String, Object> priceInfo = bookingController.calculateSeatPriceInfo(seatId);
+            int viewScore = readInt(priceInfo.get("viewScore"));
+            int price = readInt(priceInfo.get("price"));
+            seatButton.setText("<html><center>" + seatId
+                    + "<br/>View " + viewScore
+                    + "<br/>" + formatPrice(price)
+                    + "</center></html>");
+            seatButton.setToolTipText("View score " + viewScore + ", price " + formatPrice(price));
+        } catch (IllegalStateException e) {
+            seatButton.setText(seatId);
+        }
+    }
+
+    private void autoSelectGroupSeats() {
+        try {
+            int peopleCount = Integer.parseInt(groupCountField.getText().trim());
+
+            // 서버가 이미 예약된 좌석을 제외하고 그룹 인원 수에 맞는 좌석을 추천한다.
+            List<String> seatCodes = bookingController.recommendGroupSeats(peopleCount);
+
+            bookingSession.getSelectedSeats().clear();
+            bookingSession.getSelectedSeats().addAll(seatCodes);
+
+            updateSeatButtonSelection();
+            updateSelectedPrice();
+            if(isContinuousSeatList(seatCodes)) {
+                navigationController.showMessage("Recommended continuous seats: " + seatCodes);
+            } else {
+                navigationController.showMessage("Continuous seats are not enough. Alternative seats: " + seatCodes);
+            }
+        } catch (NumberFormatException e) {
+            navigationController.showMessage("Please enter a valid people count.");
+        } catch (IllegalStateException e) {
+            navigationController.showMessage(e.getMessage());
+        }
+    }
+
+    private void updateSeatButtonSelection() {
+        for(Map.Entry<String, JToggleButton> entry : seatButtons.entrySet()) {
+            entry.getValue().setSelected(bookingSession.getSelectedSeats().contains(entry.getKey()));
+        }
+    }
+
+    private int readInt(Object value) {
+        if(value instanceof Number) {
+            return ((Number) value).intValue();
+        }
+        return Integer.parseInt(String.valueOf(value));
+    }
+
+    private boolean isContinuousSeatList(List<String> seatCodes) {
+        if(seatCodes == null || seatCodes.size() <= 1) {
+            return true;
+        }
+
+        char row = seatCodes.get(0).charAt(0);
+        int beforeColumn = Integer.parseInt(seatCodes.get(0).substring(1));
+        for(int i=1; i<seatCodes.size(); i++) {
+            String seatCode = seatCodes.get(i);
+            int currentColumn = Integer.parseInt(seatCode.substring(1));
+            if(seatCode.charAt(0) != row || currentColumn != beforeColumn + 1) {
+                return false;
+            }
+            beforeColumn = currentColumn;
+        }
+        return true;
+    }
+
     private String formatPrice(int totalPrice) {
         if (totalPrice <= 0) {
             return "-";

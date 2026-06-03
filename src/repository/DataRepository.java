@@ -20,6 +20,7 @@ import domain.SeatInfo;
 import domain.Showtime;
 import domain.Theater;
 import domain.User;
+import domain.DynamicPriceCalculator;
 
 // JSON 데이터 저장소
 public class DataRepository {
