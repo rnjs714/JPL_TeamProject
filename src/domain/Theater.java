@@ -29,8 +29,14 @@ public class Theater {
         if (seatCode == null) {
             return false;
         }
-        int row = Character.toUpperCase(seatCode.charAt(0)) - 'A';
-        int column = Integer.parseInt(seatCode.substring(1));
+
+        String trimmedSeatCode = seatCode.trim();
+        if (!trimmedSeatCode.matches("[A-Za-z][0-9]+")) {
+            return false;
+        }
+
+        int row = Character.toUpperCase(trimmedSeatCode.charAt(0)) - 'A';
+        int column = Integer.parseInt(trimmedSeatCode.substring(1));
         return 0 <= row && row < rows && 1 <= column && column <= columns;
     }
 

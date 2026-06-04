@@ -129,4 +129,11 @@ public class ReservationPanel extends BasePanel implements Refreshable {
         listPanel.add(rowPanel);
     }
 
+    private String formatPrice(int totalPrice) {
+        if (totalPrice <= 0) {
+            return "-";
+        }
+        return String.format("%,d KRW", totalPrice);
+    }
+
 }
