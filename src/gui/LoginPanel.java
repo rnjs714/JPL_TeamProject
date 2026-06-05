@@ -20,7 +20,6 @@ public class LoginPanel extends BasePanel {
     private final JPasswordField passwordField;
 
     // 입력 폼/버튼 구성
-    @SuppressWarnings("this-escape")
     public LoginPanel(AuthController authController) {
         super("Login");
 

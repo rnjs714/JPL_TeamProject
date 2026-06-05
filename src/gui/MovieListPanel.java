@@ -25,7 +25,6 @@ public class MovieListPanel extends BasePanel implements Refreshable {
     private final JPanel movieListPanel; // 영화 목록을 표시할 패널
 
     // 영화 목록 영역 구성
-    @SuppressWarnings("this-escape")
     public MovieListPanel(BookingController bookingController, NavigationController navigationController) {
         super("Movies");
         this.bookingController = bookingController;

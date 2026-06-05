@@ -21,7 +21,6 @@ public class HomePanel extends BasePanel implements Refreshable {
     private final JLabel welcomeLabel;
 
     // 홈 메뉴 구성
-    @SuppressWarnings("this-escape")
     public HomePanel (AuthController authController, NavigationController navigationController) {
         super("Home");
         this.authController = authController;

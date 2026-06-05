@@ -573,5 +573,21 @@
     "status" : "CANCELED",
     "createdAt" : "2026-06-03T16:31:03.684773",
     "totalPrice" : 62000
+  }, {
+    "id" : "R1780621573999",
+    "userId" : "1234",
+    "showtimeId" : "S5",
+    "seatCodes" : [ "D3", "D4", "D5", "D6", "D7" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-06-05T10:06:14.000013",
+    "totalPrice" : 77000
+  }, {
+    "id" : "R1780621964230",
+    "userId" : "1234",
+    "showtimeId" : "S16",
+    "seatCodes" : [ "D1", "D2", "D3", "D4", "D5", "D6", "D7", "D8", "D9", "D10", "D11", "D12" ],
+    "status" : "CANCELED",
+    "createdAt" : "2026-06-05T10:12:44.231829",
+    "totalPrice" : 244000
   } ]
 }

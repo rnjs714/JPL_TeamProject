@@ -17,7 +17,6 @@ public abstract class BasePanel extends JPanel {
     protected final JPanel contentsPanel;
 
     // 타이틀/콘텐츠 영역 구성
-    @SuppressWarnings("this-escape")
     protected BasePanel(String title) {
         setLayout(new BorderLayout());
 

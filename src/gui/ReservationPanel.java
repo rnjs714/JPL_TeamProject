@@ -32,7 +32,6 @@ public class ReservationPanel extends BasePanel implements Refreshable {
     
 
     // 예매 목록 영역 구성
-    @SuppressWarnings("this-escape")
     public ReservationPanel(ReservationController reservationController, NavigationController navigationController) {
         super("Reservations");
         this.reservationController = reservationController;

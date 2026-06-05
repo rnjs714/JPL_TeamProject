@@ -1,6 +1,7 @@
 package gui;
 
 import java.awt.CardLayout;
+import java.awt.Dimension;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +32,6 @@ public class MainFrame extends JFrame {
     private final CardLayout cardLayout;
 
     // 프레임/컨트롤러/화면 초기화
-    @SuppressWarnings("this-escape")
     public MainFrame(String host, int port) {
         cardLayout = new CardLayout();
         rootPanel = new JPanel(cardLayout);
@@ -40,6 +40,7 @@ public class MainFrame extends JFrame {
         // 프레임 기본 설정
         setTitle("Movie Booking");
         setSize(900, 650);
+        setMinimumSize(new Dimension(900, 650));
         setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 

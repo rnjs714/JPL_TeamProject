@@ -22,7 +22,7 @@ import domain.SeatInfo;
 
 // Seat selection screen
 public class SeatSelectionPanel extends BasePanel implements Refreshable {
-    private static final Dimension SCREEN_LABEL_SIZE = new Dimension(800, 50);
+    private static final Dimension SCREEN_LABEL_SIZE = new Dimension(1200, 30);
     private final transient BookingController bookingController;
     private final transient NavigationController navigationController;
     private final JPanel seatGridPanel;
@@ -48,7 +48,7 @@ public class SeatSelectionPanel extends BasePanel implements Refreshable {
 
         JLabel theaterScreenLabel = new JLabel("Screen", SwingConstants.CENTER);
         theaterScreenLabel.setPreferredSize(SCREEN_LABEL_SIZE);
-        theaterScreenLabel.setMinimumSize(SCREEN_LABEL_SIZE);
+        // theaterScreenLabel.setMinimumSize(SCREEN_LABEL_SIZE);
         theaterScreenLabel.setMaximumSize(SCREEN_LABEL_SIZE);
         theaterScreenLabel.setAlignmentX(CENTER_ALIGNMENT);
         theaterScreenLabel.setOpaque(true);

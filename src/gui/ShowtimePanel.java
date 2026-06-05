@@ -28,7 +28,6 @@ public class ShowtimePanel extends BasePanel implements Refreshable {
     private final JLabel movieTitleLabel; // 선택된 영화 제목을 표시할 레이블
 
     // 상영 일정 목록 영역 구성
-    @SuppressWarnings("this-escape")
     public ShowtimePanel(BookingController bookingController, NavigationController navigationController) {
         super("Showtimes");
         this.bookingController = bookingController;
